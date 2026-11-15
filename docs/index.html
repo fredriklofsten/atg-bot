@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="sv"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ATG-boten</title>
+<meta http-equiv="refresh" content="300">
+<link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="ikon.png"><link rel="icon" href="ikon.png">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#16261d">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f1f4ef;--paper:#fff;--ink:#16261d;--soft:#4f6157;--line:#d8e0d6;--up:#2b8a3e;--down:#c92a2a;
+--acc:#1f7a4d;--gold:#d08c00;--track:#e4ebe2;--chip:#eef3ec}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1712;--paper:#16231b;--ink:#e6efe8;--soft:#a6b8ac;--line:#28392e;
+--up:#51cf66;--down:#ff8787;--acc:#4cc38a;--gold:#f2b84b;--track:#223228;--chip:#1d2c23}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 "Figtree",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.top{background:var(--ink);color:var(--bg);padding:14px 20px}
+@media (prefers-color-scheme:dark){.top{background:#07100b;color:var(--ink)}}
+.top-in{max-width:680px;margin:auto;display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.brand{font:800 20px/1 "Bricolage Grotesque",sans-serif;letter-spacing:-.01em}
+.top small{opacity:.75;font-size:14px}
+main{max-width:680px;margin:auto;padding:8px 20px 60px}
+section{padding:28px 0;border-bottom:1px solid var(--line)}
+section:last-child{border-bottom:0}
+h1,h2,h3{font-family:"Bricolage Grotesque",sans-serif;line-height:1.1;margin:0 0 10px}
+h1{font-size:clamp(40px,11vw,58px);font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+h2{font-size:24px;font-weight:800}
+h3{font-size:17px;font-weight:700;margin:0}
+p{margin:0 0 12px;max-width:62ch}
+.kicker{color:var(--soft);font-size:15px;margin-bottom:6px}
+.lede{font-size:18px;color:var(--soft)}
+.note{font-size:15px;color:var(--soft)}
+.up{color:var(--up)}.down{color:var(--down)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0 6px}
+.stat{background:var(--paper);border-radius:14px;padding:12px 14px}
+.stat b{display:block;font:800 22px/1.1 "Bricolage Grotesque",sans-serif;font-variant-numeric:tabular-nums}
+.stat span{font-size:14px;color:var(--soft)}
+.chart{background:var(--paper);border-radius:14px;padding:14px 10px 6px;margin-top:14px}
+.chart svg{display:block;width:100%;height:auto}
+.cards{display:grid;gap:14px;margin-top:16px}
+.card{background:var(--paper);border-radius:14px;padding:14px 16px}
+.card-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px}
+.time{font:800 20px/1 "Bricolage Grotesque",sans-serif;color:var(--acc);font-variant-numeric:tabular-nums}
+.horse{display:grid;grid-template-columns:28px 1fr 56px;gap:8px;align-items:center;margin:7px 0;font-size:15px}
+.nr{font:800 15px/1 "Bricolage Grotesque",sans-serif;background:var(--chip);border-radius:7px;text-align:center;padding:5px 0}
+.bar{height:8px;background:var(--track);border-radius:4px;position:relative;margin-top:4px}
+.bar i{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:var(--acc)}
+.bar u{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--gold);text-decoration:none}
+.pct{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+.bet{border-left:5px solid var(--gold);background:var(--chip);border-radius:10px;padding:9px 12px;margin-top:10px;font-size:15px}
+.bet b{font-weight:700}
+.chip{display:inline-block;font-size:13px;font-weight:700;padding:2px 9px;border-radius:999px;background:var(--chip);color:var(--soft)}
+.chip.vunnen{background:color-mix(in srgb,var(--up) 18%,transparent);color:var(--up)}
+.chip.förlorad{background:color-mix(in srgb,var(--down) 15%,transparent);color:var(--down)}
+.chip.öppen{background:color-mix(in srgb,var(--gold) 20%,transparent);color:var(--gold)}
+.list{list-style:none;padding:0;margin:14px 0 0}
+.list li{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:15px}
+.list li:last-child{border-bottom:0}
+.list .r{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.sys{font:700 16px/1.4 ui-monospace,Menlo,Consolas,monospace;background:var(--chip);border-radius:10px;padding:10px 12px;margin:8px 0;word-break:break-word}
+.legend{font-size:13px;color:var(--soft);display:flex;gap:14px;margin-top:6px}
+.legend i{display:inline-block;width:12px;height:8px;border-radius:3px;background:var(--acc);margin-right:5px}
+.legend u{display:inline-block;width:3px;height:12px;background:var(--gold);margin-right:5px;vertical-align:-2px}
+table{width:100%;border-collapse:collapse;font-size:15px;margin-top:12px;font-variant-numeric:tabular-nums}
+th,td{text-align:right;padding:8px 6px;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+th{font-weight:600;color:var(--soft);font-size:13px}
+.warn{background:color-mix(in srgb,var(--down) 12%,var(--paper));border-radius:12px;padding:12px 14px;margin-top:14px}
+.empty{color:var(--soft);font-style:italic}
+</style></head><body>
+<div class="top"><div class="top-in"><span class="brand">ATG-boten</span>
+<small>Uppdaterad 2026-11-15 21:14</small></div></div>
+<main>
+<section>
+<p class="kicker">Låtsaskassan · startade med 1 000 kr</p>
+<h1>1 000 kr</h1>
+<p class="lede"><b class="up">+0 kr</b> sedan start · 0 öppna spel</p>
+<div class="stats"><div class="stat"><b class="up">+0.0 %</b><span>ROI</span></div>
+<div class="stat"><b>0</b><span>Rättade spel</span></div>
+<div class="stat"><b>0 %</b><span>Träffar</span></div></div>
+<p class="empty">Kurvan dyker upp när boten har rättat några spel.</p>
+
+<p class="note" style="margin-top:12px">Under ca 200 rättade spel säger resultatet nästan ingenting – slumpen dominerar.</p>
+</section>
+<section><h2>Snart start</h2>
+<p class="note">Boten spelar på papper när det är under 14 minuter kvar och oddset ger minst
+10 % övervärde.</p>
+<div class="cards"><p class="empty">Inga svenska travlopp inom 45 minuter just nu. Boten kollar var tionde minut.</p></div></section>
+<section><h2>V-spel</h2><div class="cards"><p class="empty">Inga V-spel inom tre timmar.</p></div></section>
+<section><h2>Senaste spelen</h2><p class="empty">Inga spel ännu.</p></section>
+<section><h2>Per speltyp</h2><p class="empty">Tabellen fylls när de första spelen är rättade.</p></section>
+<section><h2>Hur smart är boten?</h2><p>Tränad 2026-11-15 på 5 400 lopp. Testad på 1 080 lopp den aldrig sett.</p><div class="stats"><div class="stat"><b>-1.582</b><span>Marknaden</span></div><div class="stat"><b class="up">-1.575</b><span>Boten</span></div><div class="stat"><b>1.1</b><span>Vikt på oddsen</span></div></div><p class="note">Måttet visar hur väl chanserna stämde med vinnarna (närmare 0 är bättre). Boten slår marknaden en aning. I testet gav värdespelen +53 % på slutodds, men det är för optimistiskt: slutoddsen vet ingen i förväg. Det är låtsaskassan ovan som är det riktiga provet.</p><h3 style="margin-top:18px">Det boten tittar mest på</h3><ul class="list"><li><span>Ny häst (inga odds)</span><span class="r up">ökar chansen</span></li><li><span>Intjänade pengar</span><span class="r up">ökar chansen</span></li><li><span>Pengar per start</span><span class="r up">ökar chansen</span></li><li><span>Antal starter</span><span class="r down">minskar chansen</span></li><li><span>Ålder</span><span class="r down">minskar chansen</span></li><li><span>Långsammare rekord än fältet</span><span class="r down">minskar chansen</span></li><li><span>Tillägg (per 20 m)</span><span class="r down">minskar chansen</span></li><li><span>Andra ledet (auto)</span><span class="r down">minskar chansen</span></li></ul></section>
+<section><h2>Så funkar det</h2>
+<p>Var tionde minut under tävlingsdagen hämtar boten startlistor, odds och streck från ATG. Den räknar ut varje hästs
+vinstchans och spelar bara när ATG:s odds är högre än chansen motiverar. Efter loppen rättar den sig själv.
+Varje måndag lär den sig av förra veckans lopp.</p>
+<p class="note">Allt är låtsaspengar. ATG behåller 15–35 % av varje insats, så de flesta förlorar i längden.
+Spela ansvarsfullt – Stödlinjen 020-81 91 00.</p></section>
+</main></body></html>

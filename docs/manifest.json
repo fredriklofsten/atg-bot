@@ -1,0 +1,1 @@
+{"name": "ATG-boten", "short_name": "ATG-boten", "start_url": ".", "display": "standalone", "background_color": "#f1f4ef", "theme_color": "#16261d", "icons": [{"src": "ikon.png", "sizes": "512x512", "type": "image/png"}]}
