@@ -8,7 +8,8 @@ ATG-boten – styr allt härifrån.
   python bot.py ratta                 rätta pappersspelen när loppen är klara
   python bot.py saldo                 hur går det för boten?
   python bot.py utforska V85_2026-11-14_14_5   titta i rådata för ett spel
-  python bot.py automat               (GitHub) rätta, spela lopp som snart startar, bygg appen
+  python bot.py automat               (GitHub) en runda: rätta, spela lopp som snart startar, bygg appen
+  python bot.py vakt --timmar 4.5     (GitHub) vaktar i flera timmar: odds varje minut, spel 1–3 min före start
   python bot.py app                   bygg webbappen docs/index.html
 """
 import argparse
@@ -51,8 +52,11 @@ def cmd_trana(a):
     fil = Path(DATA) / "dataset.csv"
     if not fil.exists():
         sys.exit("Ingen data ännu. Kör först: python bot.py samla --dagar 60")
-    df = pd.read_csv(fil)
+    df = pd.read_csv(fil, low_memory=False)
+    import forskare
+    inst = forskare.las_installningar()
     m = Modell()
+    m.l2, m.avstangda = inst.get("l2", config.L2_STRAFF), inst.get("avstangda", [])
     rapport = m.trana(df)
     m.spara(MODELL_FIL)
     import json
@@ -179,7 +183,7 @@ def cmd_automat(a):
         m = motor.minuter_kvar(g.get("startTime"))
         if m is None or not (0 < m <= 180):
             continue
-        an = motor.analysera_system(klient, modell, g, config.SYSTEM_BUDGET)
+        an = motor.analysera_system(klient, modell, g, min(config.SYSTEM_BUDGET, bank * config.MAX_SYSTEM_ANDEL))
         if not an:
             continue
         an["analyserad"] = motor.nu().strftime("%H:%M")
@@ -192,6 +196,159 @@ def cmd_automat(a):
     statusfil.write_text(json.dumps(status, ensure_ascii=False), encoding="utf-8")
     appen.bygg(DATA)
     print("Appen uppdaterad: docs/index.html")
+
+
+def _git_spara(meddelande):
+    """Spara och ladda upp ändringar – bara när boten körs på GitHub."""
+    import os
+    import subprocess
+    if not os.environ.get("GITHUB_ACTIONS"):
+        return
+    k = lambda *c: subprocess.run(["git", *c], capture_output=True, text=True)
+    k("add", "-A")
+    if k("commit", "-q", "-m", meddelande).returncode != 0:
+        return
+    for _ in range(3):
+        k("pull", "-q", "--rebase", "-X", "theirs")
+        if k("push", "-q").returncode == 0:
+            return
+    print("  (kunde inte ladda upp just nu – försöker igen nästa gång)")
+
+
+def cmd_vakt(a):
+    """Körs på GitHub i flera timmar: loggar odds varje minut och spelar strax före start."""
+    import json
+    import time
+    from datetime import timedelta
+    import appen
+    from features import las_loggar
+    modell = Modell.ladda(MODELL_FIL)
+    klient = ATGKlient(DATA)
+    kassa = Papperskassa(DATA)
+    slut = motor.nu() + timedelta(hours=a.timmar)
+    idag = motor.nu().date().isoformat()
+    statusfil = Path(DATA) / "idag.json"
+    status = json.loads(statusfil.read_text(encoding="utf-8")) if statusfil.exists() else {}
+    if status.get("datum") != idag:
+        status = {"datum": idag, "lopp": {}, "system": {}}
+    for nyckel in ("spelat_lopp", "spelat_system", "ai_klart"):
+        status.setdefault(nyckel, [])
+    loggfil = Path(DATA) / "oddslogg" / f"{idag}.json"
+    loggfil.parent.mkdir(parents=True, exist_ok=True)
+    logg = json.loads(loggfil.read_text(encoding="utf-8")) if loggfil.exists() else {}
+    kal, t_kal, t_bygg, t_analys = None, 0.0, 0.0, {}
+    print(f"Vaktar till {slut:%H:%M}.")
+
+    def spara_allt(medd):
+        kassa.ratta()
+        status["senast"] = motor.nu().strftime("%Y-%m-%d %H:%M")
+        status["stopp"] = kassa.forlust_senaste_veckan() > config.MAX_FORLUST_PER_VECKA
+        statusfil.write_text(json.dumps(status, ensure_ascii=False), encoding="utf-8")
+        loggfil.write_text(json.dumps(logg), encoding="utf-8")
+        appen.bygg(DATA)
+        _git_spara(medd)
+
+    while motor.nu() < slut:
+        t0 = time.time()
+        if kal is None or t0 - t_kal > 600:
+            kal = klient.kalender(idag) or kal
+            t_kal = t0
+        lopp = [(l, motor.minuter_kvar(l["starttid"])) for l in lopp_i_kalender(kal) if l["status"] != "results"]
+        lopp = [(l, m) for l, m in lopp if m is not None and m > -3]
+        vspel = [(g, motor.minuter_kvar(g.get("startTime"))) for g in spel_i_kalender(kal, config.SYSTEMSPEL)
+                 if g["land"] in config.LANDER and g["sport"] == config.SPORT and g.get("status") != "results"]
+        vspel = [(g, m) for g, m in vspel if m is not None and m > 0]
+        if not lopp and not vspel:
+            print("Inga fler lopp idag.")
+            break
+        bank = kassa.bankrulle()
+        stopp = kassa.forlust_senaste_veckan() > config.MAX_FORLUST_PER_VECKA
+        rorelse_alla, ai_alla = las_loggar(DATA)
+        for l, m in lopp:
+            lid = l["lopp_id"]
+            if not (0 < m <= config.ODDSLOGG_FRAN_MIN):
+                continue
+            spel = klient.spel(f"vinnare_{lid}", farsk=True)
+            if not spel:
+                continue
+            # 1) logga oddsen just nu
+            for lp in spel.get("races", []):
+                for st in lp.get("starts", []):
+                    o = ((st.get("pools") or {}).get("vinnare") or {}).get("odds")
+                    if o and not st.get("scratched"):
+                        logg.setdefault(lid, {}).setdefault(str(st["number"]), []).append([round(m, 1), o / 100])
+            # 2) AI-betyg en gång per lopp
+            if lid not in status["ai_klart"]:
+                hastar = [(st["number"], st.get("horse", {}).get("name", "")) for lp in spel.get("races", [])
+                          for st in lp.get("starts", []) if not st.get("scratched")]
+                betyg = motor.ai_betyg(klient, lid, hastar)
+                if betyg:
+                    rad = pd.DataFrame([{"lopp_id": lid, "nr": n, "ai_poang": v} for n, v in betyg.items()])
+                    f = Path(DATA) / "ai_betyg.csv"
+                    rad.to_csv(f, mode="a", header=not f.exists(), index=False)
+                    ai_alla.update({(lid, n): float(v) for n, v in betyg.items()})
+                status["ai_klart"].append(lid)
+            ror = motor.rorelse_fran_logg(logg.get(lid), lid)
+            rorelse_alla.update(ror)
+            # 3) spela strax före start, annars analysera för appen var 5:e minut
+            spela = m <= config.SPELA_FORE_MIN and lid not in status["spelat_lopp"]
+            if not spela and t0 - t_analys.get(lid, 0) < 300:
+                continue
+            an = motor.analysera_lopp(klient, modell, l, bank, ror, ai_alla, spel=spel)
+            t_analys[lid] = t0
+            if not an:
+                continue
+            an["analyserad"] = motor.nu().strftime("%H:%M")
+            status["lopp"][lid] = an
+            if spela:
+                status["spelat_lopp"].append(lid)
+                if ror:   # spara rörelsen som den såg ut när beslutet togs (för träningen)
+                    f = Path(DATA) / "rorelse.csv"
+                    pd.DataFrame([{"lopp_id": k[0], "nr": k[1], "rorelse": v} for k, v in ror.items()]).to_csv(
+                        f, mode="a", header=not f.exists(), index=False)
+                if not stopp and not an["for_lite_pengar"]:
+                    lagda = []
+                    bank = motor.spara_lopp_spel(kassa, an, bank, lagda)
+                    kassa.spara()
+                    print(f"  {l['bana']} {l['nr']}: {len(lagda)} spel")
+                    starka = [s for s in lagda if s["overvarde"] >= config.NOTIS_OVERVARDE]
+                    if starka:
+                        motor.notis(f"{l['bana']} lopp {l['nr']} – {str(l['starttid'])[11:16]}",
+                                    "\n".join(f"{s['typ']} {s['val']} {s['hast']} @ {s['odds']:.2f} "
+                                              f"({s['overvarde']*100:+.0f} %)" for s in starka))
+                t_bygg = 0   # bygg appen direkt efter spel
+        for g, m in vspel:
+            spela = m <= 5 and g["id"] not in status["spelat_system"]
+            if m > 180 or (not spela and t0 - t_analys.get(g["id"], 0) < 900):
+                continue
+            an = motor.analysera_system(klient, modell, g, min(config.SYSTEM_BUDGET, bank * config.MAX_SYSTEM_ANDEL), rorelse_alla, ai_alla)
+            t_analys[g["id"]] = t0
+            if not an:
+                continue
+            an["analyserad"] = motor.nu().strftime("%H:%M")
+            status["system"][g["id"]] = an
+            if spela:
+                status["spelat_system"].append(g["id"])
+                fore = len(kassa.df)
+                if not stopp:
+                    bank = motor.spara_system(kassa, an, bank)
+                    kassa.spara()
+                if len(kassa.df) > fore:
+                    sy = an["system"]["Balanserad"]
+                    motor.notis(f"{g['typ']} {g['bana']} – system lagt",
+                                f"{sy['val']}  ({sy['kostnad']:.0f} kr, värdeindex {sy['vardeindex']:.2f})")
+        if time.time() - t_bygg > 600:
+            spara_allt(f"Vakt {motor.nu():%F %H:%M}")
+            t_bygg = time.time()
+        motor.sov(max(5, 60 - (time.time() - t0) * motor._fart()))
+    spara_allt(f"Vakt {motor.nu():%F %H:%M}")
+    if not lopp_i_kalender(kal) or all(l["status"] == "results" for l in lopp_i_kalender(kal)):
+        idag_spel = kassa.df[kassa.df.skapad.astype(str).str.startswith(idag)]
+        r = idag_spel[idag_spel.status != "öppen"]
+        if len(r):
+            netto = r.utbetalning.sum() - r.insats.sum()
+            motor.notis("ATG-boten – dagens resultat",
+                        f"{len(r)} spel, netto {netto:+.0f} kr. Kassan: {kassa.bankrulle():.0f} kr.")
 
 
 def cmd_veckotraning(a):
@@ -207,6 +364,15 @@ def cmd_veckotraning(a):
     a.dagar = 8
     cmd_samla(a)
     cmd_trana(a)
+
+
+def cmd_forska(a):
+    import forskare
+    if a.steg == "planera":
+        forskare.planera()
+        _git_spara("AI-forskaren: veckans plan (förregistrerad)")
+    else:
+        forskare.kor()
 
 
 def cmd_app(a):
@@ -257,6 +423,8 @@ def main():
     s = sub.add_parser("automat"); s.set_defaults(f=cmd_automat)
     s = sub.add_parser("veckotraning"); s.add_argument("--tvinga", action="store_true"); s.set_defaults(f=cmd_veckotraning)
     s = sub.add_parser("app"); s.set_defaults(f=cmd_app)
+    s = sub.add_parser("forska"); s.add_argument("steg", choices=["planera", "kor"]); s.set_defaults(f=cmd_forska)
+    s = sub.add_parser("vakt"); s.add_argument("--timmar", type=float, default=4.5); s.set_defaults(f=cmd_vakt)
     a = p.parse_args()
     a.f(a)
 

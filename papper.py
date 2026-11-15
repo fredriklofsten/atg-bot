@@ -98,7 +98,7 @@ def _lopp_pool(spel, lopp_id, typ):
 
 def rattning(spel, r):
     """Returnerar utbetalning i kr (0 om förlust) eller None om det inte gick att avgöra."""
-    typ = r.typ
+    typ = str(r.typ).split("-")[0]          # "Plats-pool" rättas som "Plats"
     if typ in ("Vinnare", "Plats", "Trio", "Tvilling"):
         pool, _ = _lopp_pool(spel, r.lopp_id, typ.lower())
         res = pool.get("result", {}) or {}

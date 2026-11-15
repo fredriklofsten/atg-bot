@@ -3,6 +3,7 @@ Bygger webbappen docs/index.html av botens data (en enda fil, ingen server behö
 GitHub Pages visar den sedan i mobilen.
 """
 import json
+import math
 from datetime import datetime
 from html import escape
 from pathlib import Path
@@ -86,6 +87,8 @@ th:first-child,td:first-child{text-align:left}
 th{font-weight:600;color:var(--soft);font-size:13px}
 .warn{background:color-mix(in srgb,var(--down) 12%,var(--paper));border-radius:12px;padding:12px 14px;margin-top:14px}
 .empty{color:var(--soft);font-style:italic}
+.tag{font-size:12px;font-weight:700;padding:1px 7px;border-radius:999px;background:var(--chip);color:var(--soft);white-space:nowrap}
+.tag.up{color:var(--up)}.tag.down{color:var(--down)}
 """
 
 
@@ -123,10 +126,16 @@ def _plats_text(r):
     return str(r.spel_id).split("_")[0]
 
 
-def _hast_rad(nr, namn, p, streck=None, skala=1.0):
+def _hast_rad(nr, namn, p, streck=None, skala=1.0, rorelse=None, ai=None):
     bredd = min(p / skala, 1) * 100
     markor = f'<u style="left:{min(streck / skala, 1) * 100:.1f}%"></u>' if streck is not None else ""
-    return (f'<div class="horse"><span class="nr">{nr}</span><div>{escape(str(namn))}'
+    extra = ""
+    if rorelse is not None and abs(rorelse) >= 0.1:
+        extra += (f' <span class="tag up">▲ spelas ner</span>' if rorelse > 0
+                  else f' <span class="tag down">▼ spelas upp</span>')
+    if ai:
+        extra += f' <span class="tag">AI {ai:+.0f}</span>'
+    return (f'<div class="horse"><span class="nr">{nr}</span><div>{escape(str(namn))}{extra}'
             f'<div class="bar"><i style="width:{bredd:.1f}%"></i>{markor}</div></div>'
             f'<span class="pct">{p*100:.0f} %</span></div>')
 
@@ -138,10 +147,16 @@ def _lopp_kort(an):
     if an["for_lite_pengar"]:
         return (f'<div class="card">{huvud}<p class="note">För lite pengar i poolen än '
                 f'({kr(an["omsattning"])}). Boten tittar igen närmare start.</p></div>')
-    rader = "".join(_hast_rad(f["nr"], f["hast"], f["p"], skala=max(an["favoriter"][0]["p"], 0.01))
+    rader = "".join(_hast_rad(f["nr"], f["hast"], f["p"], skala=max(an["favoriter"][0]["p"], 0.01),
+                              rorelse=f.get("rorelse"), ai=f.get("ai"))
                     for f in an["favoriter"][:3])
+    pengar = [r for r in an.get("rorelser", []) if r["rorelse"] > 0]
+    if pengar:
+        rader += ('<p class="note" style="margin:8px 0 0">💰 Pengar strömmar in på: '
+                  + ", ".join(f'{r["nr"]} {escape(r["hast"])} (odds −{(1 - math.exp(-r["rorelse"]))*100:.0f} %)'
+                              for r in pengar) + '</p>')
     spel = "".join(
-        f'<div class="bet"><b>{escape(s["typ"])} {escape(s["val"])}</b> {escape(s["hast"])} · odds {s["odds"]:.2f} · '
+        f'<div class="bet"><b>{escape(s["typ"].replace("-pool", " (korspool)"))} {escape(s["val"])}</b> {escape(s["hast"])} · odds {s["odds"]:.2f} · '
         f'chans {s["chans"]*100:.0f} % · övervärde <b>{s["overvarde"]*100:+.0f} %</b> · {s["insats"]} kr</div>'
         for s in an["spel"][:5]) or '<p class="note" style="margin-top:8px">Inget värdespel – boten avstår.</p>'
     return f'<div class="card">{huvud}{rader}{spel}<p class="note" style="margin:8px 0 0">Analyserad {an.get("analyserad","")}</p></div>'
@@ -158,6 +173,11 @@ def _system_kort(an):
                 + "".join(_hast_rad(h["nr"], h["hast"], h["p"], h["streck"], skala) for h in topp))
     status = ("" if an["odds_oppna"] else
               '<p class="note">Tidigt läge: oddsen är inte mogna, chanserna bygger på streck + egen analys.</p>')
+    if an.get("jackpott"):
+        status += (f'<p class="note">🎰 <b>Jackpott {kr(an["jackpott"])}</b> – potten blir ca '
+                   f'{(an.get("jp_faktor", 1) - 1) * 100:.0f} % större, så kravet på värdeindex sänks.</p>')
+    elif config.SYSTEM_BARA_JACKPOTT:
+        status += '<p class="note">Ingen jackpott – boten pappersspelar inte den här omgången, bara visar.</p>' 
     bra = sy["vardeindex"] >= an["kravs"]
     return (f'<div class="card"><div class="card-head"><h3>{escape(an["typ"])} · {escape(an["bana"])}</h3>'
             f'<span class="time">{tid}</span></div>{status}'
@@ -249,6 +269,22 @@ def bygg(data_dir="data", ut="docs/index.html"):
                  f'slutoddsen vet ingen i förväg. Det är låtsaskassan ovan som är det riktiga provet.</p>'
                  f'<h3 style="margin-top:18px">Det boten tittar mest på</h3><ul class="list">{vrad}</ul>')
 
+    # ---------- AI-forskaren ----------
+    bokfil = Path(data_dir) / "labbdagbok.json"
+    bok = json.loads(bokfil.read_text(encoding="utf-8")) if bokfil.exists() else []
+    planfil = Path(data_dir) / "forskning_plan.json"
+    plan = json.loads(planfil.read_text(encoding="utf-8")) if planfil.exists() else None
+    forsk = ""
+    if plan:
+        forsk += (f'<div class="card"><p class="kicker">Planerat test ({escape(plan["datum"])})</p>'
+                  f'<h3>{escape(plan["text"])}</h3><p class="note" style="margin-top:6px">{escape(plan["regel"])}</p></div>')
+    for b in reversed(bok[-6:]):
+        forsk += (f'<div class="card"><div class="card-head"><h3>{escape(b["text"])}</h3>'
+                  f'<span class="chip {"vunnen" if b["infors"] else "förlorad"}">{"infört" if b["infors"] else "förkastat"}</span></div>'
+                  f'<p class="note" style="margin:0">{escape(b["datum"])} · förbättring {b["snitt_forbattring"]:+.4f} · '
+                  f'bättre {b["battre_manader"]} av {len(b["manader"])} månader</p></div>')
+    forsk = forsk or '<p class="empty">Första testet planeras på måndag.</p>'
+
     stopp = ('<div class="warn"><b>Stoppregeln är aktiv.</b> Boten har förlorat mer än '
              f'{kr(config.MAX_FORLUST_PER_VECKA)} senaste veckan och lägger inga nya spel just nu.</div>'
              if status.get("stopp") else "")
@@ -279,17 +315,22 @@ def bygg(data_dir="data", ut="docs/index.html"):
 <p class="note" style="margin-top:12px">Under ca 200 rättade spel säger resultatet nästan ingenting – slumpen dominerar.</p>
 </section>
 <section><h2>Snart start</h2>
-<p class="note">Boten spelar på papper när det är under {config.SPELFONSTER_MIN} minuter kvar och oddset ger minst
+<p class="note">Boten spelar på papper {config.SPELA_FORE_MIN} minuter före start när oddset ger minst
 {config.MIN_OVERVARDE*100:.0f} % övervärde.</p>
 <div class="cards">{lopp_html}</div></section>
 <section><h2>V-spel</h2><div class="cards">{sys_html}</div></section>
 <section><h2>Senaste spelen</h2>{senaste}</section>
 <section><h2>Per speltyp</h2>{typer}</section>
 <section><h2>Hur smart är boten?</h2>{smart}</section>
+<section><h2>AI-forskaren</h2>
+<p class="note">Varje vecka testas en idé. Reglerna för vad som räknas som vinst skrivs ner och laddas upp <i>innan</i>
+testet körs, så att slumpen inte kan lura boten.</p><div class="cards">{forsk}</div></section>
 <section><h2>Så funkar det</h2>
-<p>Var tionde minut under tävlingsdagen hämtar boten startlistor, odds och streck från ATG. Den räknar ut varje hästs
-vinstchans och spelar bara när ATG:s odds är högre än chansen motiverar. Efter loppen rättar den sig själv.
-Varje måndag lär den sig av förra veckans lopp.</p>
+<p>Under tävlingsdagen vaktar boten varje minut. Från 30 minuter före start loggar den oddsen för att se vart pengarna
+strömmar, och Claude betygsätter ATG:s kommentar om varje häst. 1–3 minuter före start räknar den ut varje hästs
+chans och spelar bara när ATG:s odds är högre än chansen motiverar. Den letar också efter lägen där ATG:s olika
+potter är oense med varandra (korspool). V-system spelas bara på jackpottdagar. Efter loppen rättar den sig själv,
+och varje måndag lär den sig av förra veckans lopp.</p>
 <p class="note">Allt är låtsaspengar. ATG behåller 15–35 % av varje insats, så de flesta förlorar i längden.
 Spela ansvarsfullt – Stödlinjen 020-81 91 00.</p></section>
 </main></body></html>"""

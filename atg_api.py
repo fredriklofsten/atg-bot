@@ -69,6 +69,21 @@ class ATGKlient:
         return self._hamta(f"{BAS_URL}/games/{spel_id}", fil) or cache
 
 
+    def hast_resultat(self, hast_id, max_timmar=12):
+        """Hästens tidigare lopp (datum, placering, km-tid, odds, galopp ...). Hämtas om max 2 ggr/dag."""
+        fil = self.raw / "hastar" / f"{hast_id}.json"
+        if fil.exists() and (self.offline or time.time() - fil.stat().st_mtime < max_timmar * 3600):
+            return self._las(fil)
+        return self._hamta(f"{BAS_URL}/horses/{hast_id}/results", fil) or (self._las(fil) if fil.exists() else None)
+
+    def kommentarer(self, lopp_id):
+        """ATG:s korta spelkommentar per startnummer, t.ex. '3 segrar på 4 starter på banan'."""
+        fil = self.raw / "kommentarer" / f"{lopp_id}.json"
+        if fil.exists():
+            return self._las(fil)
+        return self._hamta(f"{BAS_URL}/races/{lopp_id}/comments", fil)
+
+
 def spel_i_kalender(kal, typer=None):
     """Lista spel i en kalender: [{'typ','id','status','races','startTime', ...}]"""
     ut = []

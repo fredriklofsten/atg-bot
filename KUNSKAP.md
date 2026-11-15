@@ -51,6 +51,24 @@ Den här filen är botens "lärobok". Allt nedan finns också inbyggt i koden, f
 | **Snittodds senaste 5** | Vad marknaden tyckte förut | `log_snittodds5` |
 | **Distans** | Vissa hästar är sprinters, andra stayers | `lang_distans`, `kort_distans` |
 
+### Form och bana (från hästens resultatlista, bara lopp före dagens)
+| Faktor | Varför | I koden |
+|---|---|---|
+| Dagar sedan senaste start | Lång vila (> 60 dagar) betyder ofta att hästen behöver ett lopp | `log_dagar_vila`, `lang_vila` |
+| Galopp / diskning nyligen | Osäker häst, men ibland en spelchans när folket glömt den | `galopp_senaste`, `galopp_andel5`, `disk_senaste` |
+| Placeringar senaste 5 | Aktuell form | `form5`, `seger_senaste` |
+| Bästa km-tid senaste 5 | Aktuell fart jämfört med fältet | `km5_rel` |
+| Odds senaste start | Vad marknaden trodde sist | `log_odds_senaste` |
+| Barfota första gången | En klassisk "satsningssignal" från tränaren | `forsta_barfota` |
+| Kuskbyte till toppkusk | Stallet tar in en bättre kusk = tror på hästen | `kuskbyte`, `kuskbyte_topp` |
+| Banans skick | Tung bana eller vinterbana gynnar vissa hästar | `tung_bana`, `vinterbana` |
+| Hemmabana | Hästen känner banan | `hemmabana` |
+
+### Nya signaler i realtid
+- **Oddsrörelse** (`rorelse`) = log(odds 12+ min före start / odds nu). Positivt = hästen spelas ner, alltså att pengar strömmar in. Sena pengar kommer ofta från folk som vet något.
+- **AI-betyg** (`ai_poang`): Claude läser ATG:s statistikkommentar om hästen och sätter −2 till +2.
+- De här signalerna har ingen historik ännu. Tills det finns minst 300 lopp med data använder boten en försiktig förhandsvikt (0,3 för rörelse, 0,08 per AI-poäng). Sedan lär modellen sig vikten själv.
+
 ## 5. Hur boten lär sig (modellen)
 
 1. **Betingad logit (conditional logit):** varje häst får en poäng utifrån egenskaperna. Vinstchansen = häst­ens poäng jämfört med alla andra i *samma lopp* (softmax). Modellen justerar vikterna tills den förklarar de verkliga vinnarna så bra som möjligt.
@@ -65,6 +83,10 @@ Den här filen är botens "lärobok". Allt nedan finns också inbyggt i koden, f
 - **Kelly-kriteriet:** optimal insatsandel = (chans × odds − 1) / (odds − 1). Full Kelly svänger våldsamt, så boten använder **25 % Kelly** och max 3 % av bankrullen per spel.
 - **Harvilles formel:** chansen för en ordning, till exempel 3-7-1, beräknas ur vinstchanserna. Den används för Plats, Tvilling och Trio. Ren Harville överskattar favoriter på andra- och tredjeplats, så boten "plattar till" chanserna där (exponent 0,7 och 0,55, kalibrerat på svenska lopp).
 - **V-system:** boten börjar med favoriten i varje avdelning. Den lägger sedan till den häst som ger mest träffchans och värde per extra krona tills budgeten är slut. Överstreckade hästar (chans/streck < 0,6) hoppas över. Tre varianter: Försiktig, Balanserad och Skrällvänlig.
+
+- **Korspool:** samma häst har ett pris i Vinnare, Plats, Trio och Tvilling. Boten räknar om vinnaroddsen till chanser för Plats, Trio och Tvilling. Där en annan pott betalar minst 15 % mer än det motiverar spelar den, utan egen spådom.
+- **Jackpott:** jackpotpengar läggs ovanpå potten. Kravet på värdeindex delas därför med (1 + jackpott / pottens storlek efter avdrag).
+- **AI-forskaren:** varje måndag testas en hypotes, till exempel "formdatan tillför inget". Planen och regeln laddas upp innan testet körs. Ändringen förs bara in om den förbättrar i minst 4 av 5 månader och i snitt med minst 0,002.
 
 ## 7. Fallgropar boten känner till
 

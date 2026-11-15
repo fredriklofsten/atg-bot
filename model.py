@@ -16,8 +16,10 @@ import pandas as pd
 from scipy.optimize import minimize
 
 import config
-from features import FEATURES, forbered_X
+from features import FEATURES, FORHANDSVIKT, forbered_X
 
+
+MIN_LOPP_EGEN_VIKT = 300   # så många lopp med data krävs innan modellen själv väger in en ny signal
 
 # ---------------- matematiken ----------------
 def _grupper(lopp_ids):
@@ -72,12 +74,23 @@ class Modell:
         self.w2 = None
         self.medel = None
         self.std = None
+        self.antal_med = {}     # hur många lopp som har data för de nya egenskaperna
+        self.l2 = config.L2_STRAFF
+        self.avstangda = []     # egenskaper som AI-forskaren stängt av
+
+    def _maskera(self, df):
+        if not self.avstangda:
+            return df
+        df = df.copy()
+        for c in self.avstangda:
+            df[c] = 0.0
+        return df
 
     def features_namn(self):
         return list(FEATURES)
 
     def p_fundamental(self, df):
-        X, _, _ = forbered_X(df, self.medel, self.std)
+        X, _, _ = forbered_X(self._maskera(df), self.medel, self.std)
         return softmax_per_lopp(X @ self.w1, _grupper(df["lopp_id"].values))
 
     def p_slutlig(self, df):
@@ -85,10 +98,20 @@ class Modell:
         pf = self.p_fundamental(df)
         pm = marknads_p(df).values
         Z = np.c_[np.log(np.clip(pf, 1e-6, None)), np.log(np.clip(pm, 1e-6, None))]
-        return softmax_per_lopp(Z @ self.w2, _grupper(df["lopp_id"].values))
+        poang = Z @ self.w2
+        # Nya signaler utan tillräcklig historik: försiktig förhandsvikt tills modellen lärt sig själv
+        for f, vikt in FORHANDSVIKT.items():
+            if self.antal_med.get(f, 0) < MIN_LOPP_EGEN_VIKT and f in df:
+                poang = poang + vikt * pd.to_numeric(df[f], errors="coerce").fillna(0).values
+        return softmax_per_lopp(poang, _grupper(df["lopp_id"].values))
 
     def trana(self, df, visa=True):
         df = rena_lopp(df)
+        for c in FEATURES:
+            if c not in df:
+                df[c] = np.nan if c not in ("rorelse_saknas", "ai_saknas", "vila_saknas") else 1
+        self.antal_med = {f: int(df.loc[df[f + "_saknas"] == 0, "lopp_id"].nunique()) if f + "_saknas" in df else 0
+                          for f in FORHANDSVIKT}
         lopp = df["lopp_id"].unique()
         if len(lopp) < 200:
             print(f"OBS: bara {len(lopp)} lopp. Modellen blir bättre med 2000+ lopp (kör 'samla' fler dagar).")
@@ -98,8 +121,8 @@ class Modell:
         del2 = df[df.lopp_id.isin(lopp[n1:n2])]
         test = df[df.lopp_id.isin(lopp[n2:])]
 
-        X1, self.medel, self.std = forbered_X(del1)
-        self.w1 = anpassa_logit(X1, del1["vann"].values, _grupper(del1["lopp_id"].values), config.L2_STRAFF)
+        X1, self.medel, self.std = forbered_X(self._maskera(del1))
+        self.w1 = anpassa_logit(X1, del1["vann"].values, _grupper(del1["lopp_id"].values), self.l2)
 
         pf2 = self.p_fundamental(del2)
         Z2 = np.c_[np.log(pf2), np.log(marknads_p(del2).values)]
@@ -108,8 +131,8 @@ class Modell:
         rapport = self.utvardera(test)
         # Träna om steg 1 på allt utom testet så att modellen är så färsk som möjligt
         alla = df[df.lopp_id.isin(lopp[:n2])]
-        Xa, self.medel, self.std = forbered_X(alla)
-        self.w1 = anpassa_logit(Xa, alla["vann"].values, _grupper(alla["lopp_id"].values), config.L2_STRAFF)
+        Xa, self.medel, self.std = forbered_X(self._maskera(alla))
+        self.w1 = anpassa_logit(Xa, alla["vann"].values, _grupper(alla["lopp_id"].values), self.l2)
         rapport["antal_lopp"] = int(len(lopp))
         if visa:
             skriv_rapport(rapport, self)
@@ -142,7 +165,9 @@ class Modell:
         Path(fil).parent.mkdir(parents=True, exist_ok=True)
         Path(fil).write_text(json.dumps({
             "features": FEATURES, "w1": list(self.w1), "w2": list(self.w2),
-            "medel": self.medel.to_dict(), "std": self.std.to_dict()}, indent=1), encoding="utf-8")
+            "medel": self.medel.to_dict(), "std": self.std.to_dict(), "antal_med": self.antal_med,
+            "l2": self.l2, "avstangda": self.avstangda},
+            indent=1), encoding="utf-8")
 
     @classmethod
     def ladda(cls, fil="models/modell.json"):
@@ -152,6 +177,8 @@ class Modell:
             raise SystemExit("Modellen är tränad med andra egenskaper – kör 'python bot.py trana' igen.")
         m.w1, m.w2 = np.array(d["w1"]), np.array(d["w2"])
         m.medel, m.std = pd.Series(d["medel"]), pd.Series(d["std"])
+        m.antal_med = d.get("antal_med", {})
+        m.l2, m.avstangda = d.get("l2", config.L2_STRAFF), d.get("avstangda", [])
         return m
 
 

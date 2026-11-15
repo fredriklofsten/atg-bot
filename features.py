@@ -22,7 +22,16 @@ FEATURES = [
     "barfota_fram", "barfota_bak", "skobyte", "amerikansk_vagn",
     "log_snittodds5", "snittodds_saknas", "startpoang",
     "lang_distans", "kort_distans",
+    # form senaste starterna (från hästens resultatlista)
+    "log_dagar_vila", "lang_vila", "vila_saknas", "galopp_senaste", "galopp_andel5", "disk_senaste",
+    "form5", "seger_senaste", "km5_rel", "log_odds_senaste", "forsta_barfota", "kuskbyte", "kuskbyte_topp",
+    # bana
+    "tung_bana", "vinterbana", "hemmabana",
+    # marknadsrörelse och AI (lärs in när data finns, se model.py)
+    "rorelse", "rorelse_saknas", "ai_poang", "ai_saknas",
 ]
+# Egenskaper som saknar historik från start. Tills modellen sett nog med lopp används en försiktig förhandsvikt.
+FORHANDSVIKT = {"rorelse": 0.3, "ai_poang": 0.08}
 
 
 def g(d, *nycklar, default=None):
@@ -47,13 +56,54 @@ def krympt_pct(vinster, starter, prior, styrka):
     return (vinster + prior * styrka) / (starter + styrka)
 
 
+PLACPOANG = {"1": 1.0, "2": 0.6, "3": 0.4, "4": 0.2, "5": 0.1}
+
+
+def form_fran_resultat(resultat, datum, nu_barfota, kusk_id, kusk_pct):
+    """Form-egenskaper ur hästens tidigare lopp – bara lopp FÖRE datum räknas."""
+    tom = {"log_dagar_vila": float("nan"), "lang_vila": 0, "vila_saknas": 1, "galopp_senaste": 0,
+           "galopp_andel5": 0.0, "disk_senaste": 0, "form5": float("nan"), "seger_senaste": 0,
+           "km5": float("nan"), "log_odds_senaste": float("nan"), "forsta_barfota": 0,
+           "kuskbyte": 0, "kuskbyte_topp": 0}
+    recs = [r for r in (resultat or {}).get("records", []) or []
+            if r.get("date", "9999") < datum and g(r, "race", "type") != "qualifier"]
+    if not recs:
+        return tom
+    recs.sort(key=lambda r: r["date"], reverse=True)
+    sen = recs[0]
+    fem = recs[:5]
+    from datetime import date as _d
+    dagar = (_d.fromisoformat(datum) - _d.fromisoformat(sen["date"])).days
+    tider = [km_tid(r.get("kmTime")) for r in fem]
+    tider = [t for t in tider if t and 60 < t < 100]
+    odds = sen.get("odds")
+    skor_fore = g(sen, "start", "horse", "shoes", default={}) or {}
+    hade_skor = skor_fore.get("front") is True and skor_fore.get("back") is True
+    byte = 1 if g(sen, "start", "driver", "id") and kusk_id and g(sen, "start", "driver", "id") != kusk_id else 0
+    return {
+        "log_dagar_vila": math.log1p(dagar), "lang_vila": 1 if dagar > 60 else 0, "vila_saknas": 0,
+        "galopp_senaste": 1 if sen.get("galloped") else 0,
+        "galopp_andel5": sum(1 for r in fem if r.get("galloped")) / len(fem),
+        "disk_senaste": 1 if sen.get("disqualified") else 0,
+        "form5": (sum(PLACPOANG.get(str(r.get("place")), 0) for r in fem) + 0.25 * 2) / (len(fem) + 2),
+        "seger_senaste": 1 if str(sen.get("place")) == "1" else 0,
+        "km5": min(tider) if tider else float("nan"),
+        "log_odds_senaste": math.log(odds / 100) if odds and odds > 100 else float("nan"),
+        "forsta_barfota": 1 if (nu_barfota and hade_skor) else 0,
+        "kuskbyte": byte, "kuskbyte_topp": 1 if byte and kusk_pct >= 0.15 else 0,
+    }
+
+
 def stat_ar(stats, ar):
     years = g(stats, "years", default={}) or {}
     return years.get(str(ar)) or {}
 
 
-def rader_fran_spel(spel, speltyp=None):
-    """En rad per (lopp, häst) ur ett spel-JSON."""
+def rader_fran_spel(spel, speltyp=None, klient=None, rorelse=None, ai=None):
+    """En rad per (lopp, häst) ur ett spel-JSON.
+    klient: hämtar hästarnas formrader. rorelse/ai: {(lopp_id, nr): värde} från vaktläget."""
+    rorelse = rorelse or {}
+    ai = ai or {}
     rader = []
     if not spel:
         return rader
@@ -81,6 +131,13 @@ def rader_fran_spel(spel, speltyp=None):
             spar = s.get("postPosition") or s.get("number") or 0
             avst = s.get("distance") or distans
             snitt5 = g(hast, "statistics", "lastFiveStarts", "averageOdds")
+            barfota_nu = (g(hast, "shoes", "front", "hasShoe") is False) or (g(hast, "shoes", "back", "hasShoe") is False)
+            kusk_pct = krympt_pct(g(kusk, "placement", "1", default=0), kusk.get("starts", 0) or 0, 0.08, 30)
+            res = klient.hast_resultat(hast["id"]) if (klient is not None and hast.get("id")) else None
+            form = form_fran_resultat(res, datum, barfota_nu, g(s, "driver", "id"), kusk_pct)
+            skick = g(lopp, "track", "condition")
+            rr = rorelse.get((lopp["id"], s.get("number")))
+            aa = ai.get((lopp["id"], s.get("number")))
             pools = s.get("pools", {}) or {}
             vodds = g(pools, "vinnare", "odds") or g(s, "result", "finalOdds")
             if vodds and vodds > 50:          # ATG skickar odds*100 (351 = 3.51)
@@ -117,7 +174,7 @@ def rader_fran_spel(spel, speltyp=None):
                 "rekord_km": rek if rek else float("nan"),
                 "rekord_saknas": 0 if rek else 1,
                 "rekord_rel": float("nan"),     # fylls i nedan (jämfört med loppets snitt)
-                "kusk_seger_pct": krympt_pct(g(kusk, "placement", "1", default=0), kusk.get("starts", 0) or 0, 0.08, 30),
+                "kusk_seger_pct": kusk_pct,
                 "kusk_starter_log": math.log1p(kusk.get("starts", 0) or 0),
                 "tranare_seger_pct": krympt_pct(g(tran, "placement", "1", default=0), tran.get("starts", 0) or 0, 0.08, 30),
                 "barfota_fram": 0 if g(hast, "shoes", "front", "hasShoe", default=True) else 1,
@@ -129,6 +186,14 @@ def rader_fran_spel(spel, speltyp=None):
                 "startpoang": (liv.get("startPoints") or 0) / 1000,
                 "lang_distans": 1 if distans >= 2600 else 0,
                 "kort_distans": 1 if distans <= 1700 else 0,
+                **form,
+                "km5_rel": float("nan"),
+                "tung_bana": 1 if skick in ("dead", "heavy") else 0,
+                "vinterbana": 1 if skick == "winter" else 0,
+                "hemmabana": 1 if g(hast, "homeTrack", "id") and g(hast, "homeTrack", "id") == g(lopp, "track", "id") else 0,
+                "rorelse": rr if rr is not None else 0.0, "rorelse_saknas": 0 if rr is not None else 1,
+                "ai_poang": aa if aa is not None else 0.0, "ai_saknas": 0 if aa is not None else 1,
+                "hast_id": hast.get("id"), "kusk_id": g(s, "driver", "id"), "bana_id": g(lopp, "track", "id"),
                 # --- marknad (vad spelarna tror) ---
                 "odds": vodds, "plats_odds": podds / 100 if podds else None,
                 "streck": strk / 100 if strk is not None else None,   # procent
@@ -149,6 +214,9 @@ def fyll_relativa(df):
     """Jämför hästen med de andra i samma lopp (rekordtid relativt fältet)."""
     snitt = df.groupby("lopp_id")["rekord_km"].transform("mean")
     df["rekord_rel"] = (df["rekord_km"] - snitt).fillna(0.0)
+    if "km5" in df:
+        snitt5 = df.groupby("lopp_id")["km5"].transform("mean")
+        df["km5_rel"] = (df["km5"] - snitt5).fillna(0.0)
     return df
 
 
@@ -156,11 +224,24 @@ def forbered_X(df, medel=None, std=None):
     """Fyll saknade värden och standardisera. Returnerar X, medel, std."""
     X = df[FEATURES].apply(pd.to_numeric, errors="coerce").astype(float)
     if medel is None:
-        medel = X.mean()
+        medel = X.mean().fillna(0.0)
         std = X.std().replace(0, 1).fillna(1)
-    X = X.fillna(medel)
+    X = X.fillna(medel).fillna(0.0)
     X = (X - medel) / std
     return X.values, medel, std
+
+
+def las_loggar(data_dir="data"):
+    """Oddsrörelser och AI-betyg som vaktläget sparat: {(lopp_id, nr): värde}."""
+    ut = []
+    for namn, kol in (("rorelse.csv", "rorelse"), ("ai_betyg.csv", "ai_poang")):
+        f = Path(data_dir) / namn
+        d = {}
+        if f.exists():
+            t = pd.read_csv(f).drop_duplicates(["lopp_id", "nr"], keep="last")
+            d = {(r.lopp_id, int(r.nr)): float(getattr(r, kol)) for r in t.itertuples()}
+        ut.append(d)
+    return ut
 
 
 def bygg_dataset(dagar, data_dir="data", offline=False, visa=True):
@@ -172,7 +253,7 @@ def bygg_dataset(dagar, data_dir="data", offline=False, visa=True):
         lopp = [l for l in lopp_i_kalender(kal) if l["status"] == "results"]
         for l in lopp:
             spel = klient.spel(f"vinnare_{l['lopp_id']}")
-            alla.extend(rader_fran_spel(spel, "vinnare"))
+            alla.extend(rader_fran_spel(spel, "vinnare", klient, *las_loggar(data_dir)))
         if visa:
             print(f"  {dag}: {len(lopp)} lopp  ({i}/{len(dagar)})")
     df = pd.DataFrame(alla)

@@ -1,7 +1,10 @@
 name: ATG-boten
 on:
   schedule:
-    - cron: "*/10 9-21 * * *"   # var 10:e minut 10:00–22:59 svensk vintertid (GitHub kan dröja några minuter)
+    # Tre vaktpass per dag (svensk vintertid). Varje pass kollar odds varje minut i 4,5 timmar.
+    - cron: "40 8 * * *"    # 09:40
+    - cron: "10 13 * * *"   # 14:10
+    - cron: "40 17 * * *"   # 18:40
   workflow_dispatch:
 permissions:
   contents: write
@@ -12,9 +15,11 @@ concurrency:
 jobs:
   kor:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 330
     env:
       TZ: Europe/Stockholm
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      NTFY_AMNE: ${{ secrets.NTFY_AMNE }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -22,17 +27,26 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: pip install -r requirements.txt
-      - name: Lär om på måndagar
-        run: '[ "$(date +%u)" = "1" ] && python bot.py veckotraning || true'
-      - name: Rätta, spela och bygg appen
-        run: python bot.py automat
-      - name: Spara resultat
+      - name: Git-identitet
         run: |
           git config user.name "atg-boten"
           git config user.email "atg-boten@users.noreply.github.com"
+      - name: Måndag förmiddag – lär om och låt AI-forskaren testa veckans idé
+        run: |
+          if [ "$(date +%u)" = "1" ] && [ "$(date +%H)" -lt 12 ]; then
+            python bot.py veckotraning
+            python bot.py forska planera
+            python bot.py forska kor
+            python bot.py trana
+          fi
+      - name: Vakta loppen
+        run: python bot.py vakt --timmar 4.5
+      - name: Spara resultat
+        if: always()
+        run: |
           git add -A
           git commit -q -m "Körning $(date '+%F %H:%M')" || exit 0
-          git pull -q --rebase
+          git pull -q --rebase -X theirs
           git push -q
       - name: Larma om något gick fel
         if: failure()

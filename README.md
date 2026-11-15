@@ -14,9 +14,25 @@ Boten spelar **bara med låtsaspengar** och rättar sig själv. Läs `KUNSKAP.md
 
 ## Appen (körs automatiskt på GitHub)
 
-Var tionde minut mellan 10 och 23 kör GitHub boten åt dig. Den rättar gamla spel och pappersspelar lopp som startar inom 14 minuter. Sedan bygger den om webbappen i `docs/index.html`. Varje måndag lär den sig av förra veckans lopp. Datorn behöver inte vara på.
+GitHub kör boten i tre vaktpass per dag: 09:40, 14:10 och 18:40, 4,5 timmar vardera. Under passen kollar boten varje minut:
 
-Appen visar låtsaskassan, kurvan, lopp som snart startar, V-spelssystem, senaste spelen och hur smart modellen är. Öppna länken i mobilen och välj "Lägg till på hemskärmen", så blir den en app-ikon.
+- **Oddsrörelser:** från 30 min före start loggas vinnaroddsen varje minut. Hästar som spelas ner ("smarta pengar") syns i appen och påverkar chansen.
+- **AI-betyg:** Claude läser ATG:s kommentar om varje häst och ger −2 till +2. Kräver hemligheten `ANTHROPIC_API_KEY`.
+- **Spel i sista minuten:** 3 min före start räknar boten och pappersspelar Vinnare, Plats, Trio och Tvilling med övervärde.
+- **Korspool:** spel där ATG:s potter är oense med varandra, oberoende av botens egen spådom.
+- **V-spel bara på jackpott:** jackpotten sänker kravet på värdeindex. Utan jackpott visas systemen bara.
+- **Notiser:** starka spel (+30 %) och dagens resultat skickas till mobilen via appen ntfy. Kräver hemligheten `NTFY_AMNE`.
+- **Måndagar:** boten hämtar förra veckans lopp och tränar om. AI-forskaren skriver ner veckans hypotes och regler, laddar upp dem och testar sedan. Ändringar förs bara in om de vinner enligt de förregistrerade reglerna.
+
+Appen: https://fredriklofsten.github.io/atg-bot/ – välj "Lägg till på hemskärmen" i mobilen.
+
+### Hemligheter (Settings → Secrets and variables → Actions → New repository secret)
+| Namn | Värde | Behövs för |
+|---|---|---|
+| `ANTHROPIC_API_KEY` | samma nyckel som i tradingboten | AI-betyg av kommentarerna |
+| `NTFY_AMNE` | ett hemligt ord, t.ex. `atg-fredrik-k7q2x9` | notiser. Prenumerera på samma ord i appen ntfy |
+
+Boten fungerar utan dem. Då hoppar den bara över AI-betygen och notiserna.
 
 Får du ett "issue" på GitHub om att boten kraschade: skicka länken till Claude.
 
