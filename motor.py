@@ -154,7 +154,7 @@ def spara_lopp_spel(kassa, analys, bank, lagda=None):
     """Lägg loppets värdespel i papperskassan. Returnerar ny bankrulle (lagda spel läggs i listan lagda)."""
     for s in analys["spel"]:
         if 0 < s["insats"] <= bank and kassa.lagg(s["spel_id"], analys["lopp_id"], s["typ"], s["val"],
-                                                  s["insats"], s["odds"], s["chans"]):
+                                                  s["insats"], s["odds"], s["chans"], kommentar=s.get("hast", "")):
             bank -= s["insats"]
             if lagda is not None:
                 lagda.append(s)

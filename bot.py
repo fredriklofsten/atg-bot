@@ -337,6 +337,9 @@ def cmd_vakt(a):
                     sy = an["system"]["Balanserad"]
                     motor.notis(f"{g['typ']} {g['bana']} – system lagt",
                                 f"{sy['val']}  ({sy['kostnad']:.0f} kr, värdeindex {sy['vardeindex']:.2f})")
+        kommande = sorted((l for l, m in lopp if m > 0), key=lambda l: l["starttid"])
+        status["nasta"] = ({"bana": kommande[0]["bana"], "nr": kommande[0]["nr"], "start": kommande[0]["starttid"]}
+                           if kommande else None)
         if time.time() - t_bygg > 600:
             spara_allt(f"Vakt {motor.nu():%F %H:%M}")
             t_bygg = time.time()

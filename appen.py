@@ -87,6 +87,22 @@ th:first-child,td:first-child{text-align:left}
 th{font-weight:600;color:var(--soft);font-size:13px}
 .warn{background:color-mix(in srgb,var(--down) 12%,var(--paper));border-radius:12px;padding:12px 14px;margin-top:14px}
 .empty{color:var(--soft);font-style:italic}
+nav.tabs{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+nav.tabs div{max-width:680px;margin:auto;display:flex;gap:6px;overflow-x:auto;padding:10px 20px;scrollbar-width:none}
+nav.tabs a{flex:none;text-decoration:none;color:var(--ink);background:var(--paper);border-radius:999px;padding:7px 14px;
+font-size:15px;font-weight:600}
+nav.tabs a:active{background:var(--chip)}
+section{scroll-margin-top:60px}
+.nu{background:var(--paper);border-radius:14px;padding:14px 16px;margin:18px 0 4px;font-size:16px}
+.nu b{font-weight:700}
+.plain{font-size:16px;margin:0 0 4px}
+.plain b{font-weight:700}
+details{background:var(--paper);border-radius:12px;padding:12px 14px;margin:8px 0}
+details summary{cursor:pointer;font-weight:700;list-style:none}
+details summary::-webkit-details-marker{display:none}
+details summary::before{content:"＋ ";color:var(--acc)}
+details[open] summary::before{content:"－ "}
+details p{margin:8px 0 0;color:var(--soft);font-size:15px}
 .tag{font-size:12px;font-weight:700;padding:1px 7px;border-radius:999px;background:var(--chip);color:var(--soft);white-space:nowrap}
 .tag.up{color:var(--up)}.tag.down{color:var(--down)}
 """
@@ -126,6 +142,25 @@ def _plats_text(r):
     return str(r.spel_id).split("_")[0]
 
 
+TYPNAMN = {"Plats-pool": "Plats (korspool)", "Trio-pool": "Trio (korspool)", "Tvilling-pool": "Tvilling (korspool)"}
+
+
+def _klartext(typ, val, hast=""):
+    """Gör om ett spel till en mening alla förstår."""
+    bas = str(typ).split("-")[0]
+    namn = f" {escape(str(hast))}" if hast and str(hast) != "nan" else ""
+    if bas == "Vinnare":
+        return f"att <b>{escape(str(val))}{namn}</b> vinner"
+    if bas == "Plats":
+        return f"att <b>{escape(str(val))}{namn}</b> kommer topp 3"
+    if bas == "Trio":
+        return "att ordningen blir <b>" + " → ".join(escape(x) for x in str(val).split("-")) + "</b>"
+    if bas == "Tvilling":
+        a = str(val).split("-")
+        return f"att <b>{escape(a[0])} och {escape(a[-1])}</b> blir etta och tvåa (valfri ordning)"
+    return f"alla avdelningar rätt i <b>{escape(str(typ))}</b>"
+
+
 def _hast_rad(nr, namn, p, streck=None, skala=1.0, rorelse=None, ai=None):
     bredd = min(p / skala, 1) * 100
     markor = f'<u style="left:{min(streck / skala, 1) * 100:.1f}%"></u>' if streck is not None else ""
@@ -146,7 +181,7 @@ def _lopp_kort(an):
              f'<span class="time">{tid}</span></div>')
     if an["for_lite_pengar"]:
         return (f'<div class="card">{huvud}<p class="note">För lite pengar i poolen än '
-                f'({kr(an["omsattning"])}). Boten tittar igen närmare start.</p></div>')
+                f'({kr(an["omsattning"])}). Odds så tidigt är opålitliga – boten tittar igen närmare start.</p></div>')
     rader = "".join(_hast_rad(f["nr"], f["hast"], f["p"], skala=max(an["favoriter"][0]["p"], 0.01),
                               rorelse=f.get("rorelse"), ai=f.get("ai"))
                     for f in an["favoriter"][:3])
@@ -156,9 +191,12 @@ def _lopp_kort(an):
                   + ", ".join(f'{r["nr"]} {escape(r["hast"])} (odds −{(1 - math.exp(-r["rorelse"]))*100:.0f} %)'
                               for r in pengar) + '</p>')
     spel = "".join(
-        f'<div class="bet"><b>{escape(s["typ"].replace("-pool", " (korspool)"))} {escape(s["val"])}</b> {escape(s["hast"])} · odds {s["odds"]:.2f} · '
-        f'chans {s["chans"]*100:.0f} % · övervärde <b>{s["overvarde"]*100:+.0f} %</b> · {s["insats"]} kr</div>'
-        for s in an["spel"][:5]) or '<p class="note" style="margin-top:8px">Inget värdespel – boten avstår.</p>'
+        f'<div class="bet"><p class="plain">{"🔀 " if "-pool" in s["typ"] else ""}Satsar <b>{s["insats"]} kr</b> på '
+        f'{_klartext(s["typ"], s["val"], s["hast"])}.</p>'
+        f'<span class="note">Rätt ger {kr(s["insats"] * s["odds"])} tillbaka · botens chans {s["chans"]*100:.0f} % · '
+        f'det är värt <b>{s["overvarde"]*100:+.0f} %</b> mer än det kostar</span></div>'
+        for s in an["spel"][:5]) or ('<p class="note" style="margin-top:8px">Inget spel här – oddsen är inte '
+                                     'tillräckligt bra. Att avstå är också ett beslut.</p>')
     return f'<div class="card">{huvud}{rader}{spel}<p class="note" style="margin:8px 0 0">Analyserad {an.get("analyserad","")}</p></div>'
 
 
@@ -181,10 +219,13 @@ def _system_kort(an):
     bra = sy["vardeindex"] >= an["kravs"]
     return (f'<div class="card"><div class="card-head"><h3>{escape(an["typ"])} · {escape(an["bana"])}</h3>'
             f'<span class="time">{tid}</span></div>{status}'
-            f'<p class="kicker" style="margin:4px 0 0">Balanserat system · {sy["rader"]:.0f} rader · {kr(sy["kostnad"])}</p>'
+            f'<p class="plain" style="margin-top:6px">Botens förslag: <b>{sy["rader"]:.0f} rader för {kr(sy["kostnad"])}</b>. '
+            f'Siffrorna är startnummer, en grupp per avdelning:</p>'
             f'<div class="sys">{escape(sy["val"].replace("/", " / "))}</div>'
             f'<p class="note">Värdeindex <b class="{"up" if bra else "down"}">{sy["vardeindex"]:.2f}</b> '
             f'(behövs ~{an["kravs"]:.2f}) · chans alla rätt {sy["traffchans"]*100:.2f} %</p>'
+            f'<p class="note" style="margin-top:10px">Grön stapel = botens chans. Gult streck = hur många som spelat hästen. '
+            f'Går den gröna stapeln förbi det gula strecket är hästen <b>understreckad</b> – där finns värdet.</p>'
             f'{avd}<div class="legend"><span><i></i>Botens chans</span><span><u></u>Streck (vad folket tror)</span></div></div>')
 
 
@@ -232,8 +273,10 @@ def bygg(data_dir="data", ut="docs/index.html"):
             plats = _plats_text(r)
             res = (f'+{kr(r.utbetalning)}' if r.status == "vunnen" else
                    (f'−{kr(r.insats)}' if r.status == "förlorad" else kr(r.insats)))
-            senaste += (f'<li><span><b>{escape(str(r.typ))} {escape(str(r.val))[:40]}</b><br>'
-                        f'<span class="note">{escape(plats)} · {str(r.skapad)[5:16].replace("T", " ")}</span></span>'
+            hast = r.kommentar if isinstance(r.kommentar, str) and "värdeindex" not in r.kommentar else ""
+            senaste += (f'<li><span>{kr(r.insats)} på {_klartext(r.typ, r.val, hast)}<br>'
+                        f'<span class="note">{escape(TYPNAMN.get(str(r.typ), str(r.typ)))} · {escape(plats)} · '
+                        f'{str(r.skapad)[5:16].replace("T", " ")}</span></span>'
                         f'<span class="r"><span class="chip {r.status}">{r.status}</span><br>{res}</span></li>')
     senaste = f'<ul class="list">{senaste}</ul>' if senaste else '<p class="empty">Inga spel ännu.</p>'
 
@@ -242,10 +285,10 @@ def bygg(data_dir="data", ut="docs/index.html"):
     if len(rattade):
         for typ, g in rattade.groupby("typ"):
             i, t = g.insats.sum(), g.utbetalning.sum()
-            typer += (f'<tr><td>{escape(str(typ))}</td><td>{len(g)}</td><td>{(g.status=="vunnen").mean()*100:.0f} %</td>'
+            typer += (f'<tr><td>{escape(TYPNAMN.get(str(typ), str(typ)))}</td><td>{len(g)}</td><td>{(g.status=="vunnen").mean()*100:.0f} %</td>'
                       f'<td class="{"up" if t >= i else "down"}">{(t-i)/i*100:+.0f} %</td><td>{t-i:+,.0f}</td></tr>'
                       ).replace(",", " ")
-        typer = (f'<table><tr><th>Spel</th><th>Antal</th><th>Träff</th><th>ROI</th><th>Netto kr</th></tr>{typer}</table>')
+        typer = (f'<table><tr><th>Spel</th><th>Antal</th><th>Vinster</th><th>Avkastning</th><th>Netto kr</th></tr>{typer}</table>')
     else:
         typer = '<p class="empty">Tabellen fylls när de första spelen är rättade.</p>'
 
@@ -258,15 +301,16 @@ def bygg(data_dir="data", ut="docs/index.html"):
         vrad = "".join(f'<li><span>{escape(ETIKETT.get(k, k))}</span><span class="r {"up" if w > 0 else "down"}">'
                        f'{"ökar" if w > 0 else "minskar"} chansen</span></li>' for k, w in vikter)
         sim = rapport.get("sim_10", {})
-        smart = (f'<p>Tränad {rapport.get("datum","")} på {rapport.get("antal_lopp",0):,} lopp. '
-                 f'Testad på {rapport["testlopp"]:,} lopp den aldrig sett.</p>'.replace(",", " ") +
-                 f'<div class="stats"><div class="stat"><b>{m:.3f}</b><span>Marknaden</span></div>'
-                 f'<div class="stat"><b class="{"up" if vinner else "down"}">{b:.3f}</b><span>Boten</span></div>'
-                 f'<div class="stat"><b>{rapport.get("blandning",[0,0])[1]:.1f}</b><span>Vikt på oddsen</span></div></div>'
-                 f'<p class="note">Måttet visar hur väl chanserna stämde med vinnarna (närmare 0 är bättre). '
-                 f'{"Boten slår marknaden en aning." if vinner else "Boten slår inte marknaden ännu."} '
-                 f'I testet gav värdespelen {sim.get("roi",0)*100:+.0f} % på slutodds, men det är för optimistiskt: '
-                 f'slutoddsen vet ingen i förväg. Det är låtsaskassan ovan som är det riktiga provet.</p>'
+        battre = (math.exp(b - m) - 1) * 100
+        smart = (f'<p class="plain">{"✅" if vinner else "⚠️"} Botens chanser träffar '
+                 f'<b>{abs(battre):.1f} % {"bättre" if vinner else "sämre"}</b> än oddsen på lopp den aldrig sett.</p>'
+                 f'<p class="note">Det låter lite, men oddsen är summan av vad tusentals spelare tror – att slå dem alls är '
+                 f'svårt. Tränad {rapport.get("datum","")} på {rapport.get("antal_lopp",0):,} lopp.</p>'.replace(",", " ") +
+                 f'<details><summary>Siffrorna för den som vill nörda</summary>'
+                 f'<p>Snitt-loglik för vinnaren: marknaden {m:.4f}, boten {b:.4f} (närmare 0 = bättre). '
+                 f'Boten väger egen analys {rapport.get("blandning",[0,0])[0]:.2f} och oddsen {rapport.get("blandning",[0,0])[1]:.2f}. '
+                 f'I testet gav värdespelen {sim.get("roi",0)*100:+.0f} % på slutodds – för optimistiskt, eftersom slutoddsen inte '
+                 f'är kända när man spelar. Låtsaskassan är det riktiga provet.</p></details>'
                  f'<h3 style="margin-top:18px">Det boten tittar mest på</h3><ul class="list">{vrad}</ul>')
 
     # ---------- AI-forskaren ----------
@@ -281,9 +325,35 @@ def bygg(data_dir="data", ut="docs/index.html"):
     for b in reversed(bok[-6:]):
         forsk += (f'<div class="card"><div class="card-head"><h3>{escape(b["text"])}</h3>'
                   f'<span class="chip {"vunnen" if b["infors"] else "förlorad"}">{"infört" if b["infors"] else "förkastat"}</span></div>'
-                  f'<p class="note" style="margin:0">{escape(b["datum"])} · förbättring {b["snitt_forbattring"]:+.4f} · '
-                  f'bättre {b["battre_manader"]} av {len(b["manader"])} månader</p></div>')
+                  f'<p class="note" style="margin:0">{escape(b["datum"])} · idén var bättre {b["battre_manader"]} av '
+                  f'{len(b["manader"])} månader ({"tillräckligt" if b["infors"] else "inte tillräckligt"} för att föras in)</p></div>')
     forsk = forsk or '<p class="empty">Första testet planeras på måndag.</p>'
+
+    # ---------- Vad händer nu? ----------
+    try:
+        senast = datetime.fromisoformat(status.get("senast", "2000-01-01 00:00"))
+    except ValueError:
+        senast = datetime(2000, 1, 1)
+    vaktar = (nu - senast).total_seconds() < 15 * 60
+    if vaktar:
+        nasta = status.get("nasta")
+        nu_text = "🟢 <b>Boten vaktar just nu</b> och kollar oddsen varje minut."
+        if nasta:
+            nu_text += (f' Nästa lopp: <b>{escape(nasta["bana"])} lopp {nasta["nr"]} kl {str(nasta["start"])[11:16]}</b>. '
+                        f'Den bestämmer sig {config.SPELA_FORE_MIN} min före start.')
+    else:
+        pass_tider = ["09:40", "14:10", "18:40"]
+        kl = nu.strftime("%H:%M")
+        nasta_pass = next((t for t in pass_tider if t > kl), None)
+        nu_text = (f"😴 <b>Boten vilar.</b> Nästa vaktpass startar "
+                   f"{'kl ' + nasta_pass if nasta_pass else 'i morgon kl 09:40'}.")
+    if oppna:
+        nu_text += f" {oppna} spel väntar på resultat."
+    idag_df = df[df.skapad.astype(str).str.startswith(nu.date().isoformat())] if not df.empty else df
+    idag_r = idag_df[idag_df.status.isin(["vunnen", "förlorad"])] if len(idag_df) else idag_df
+    if len(idag_r):
+        netto_idag = idag_r.utbetalning.sum() - idag_r.insats.sum()
+        nu_text += f' Idag: <b class="{"up" if netto_idag >= 0 else "down"}">{netto_idag:+,.0f} kr</b>'.replace(",", " ")
 
     stopp = ('<div class="warn"><b>Stoppregeln är aktiv.</b> Boten har förlorat mer än '
              f'{kr(config.MAX_FORLUST_PER_VECKA)} senaste veckan och lägger inga nya spel just nu.</div>'
@@ -302,36 +372,60 @@ def bygg(data_dir="data", ut="docs/index.html"):
 <style>{CSS}</style></head><body>
 <div class="top"><div class="top-in"><span class="brand">ATG-boten</span>
 <small>Uppdaterad {escape(status.get("senast", datetime.now().strftime("%Y-%m-%d %H:%M")))}</small></div></div>
+<nav class="tabs"><div><a href="#kassa">Kassan</a><a href="#lopp">Snart start</a><a href="#v">V-spel</a>
+<a href="#historik">Historik</a><a href="#hjarna">Hjärnan</a><a href="#hjalp">Hjälp</a></div></nav>
 <main>
-<section>
-<p class="kicker">Låtsaskassan · startade med {kr(config.BANKRULLE_START)}</p>
+<section id="kassa">
+<div class="nu">{nu_text}</div>
+<p class="kicker" style="margin-top:18px">Låtsaskassan · startade med {kr(config.BANKRULLE_START)}</p>
 <h1>{kr(bank)}</h1>
-<p class="lede"><b class="{tecken}">{diff:+,.0f} kr</b> sedan start · {oppna} öppna spel</p>
-<div class="stats"><div class="stat"><b class="{"up" if roi >= 0 else "down"}">{roi:+.1f} %</b><span>ROI</span></div>
-<div class="stat"><b>{len(rattade)}</b><span>Rättade spel</span></div>
-<div class="stat"><b>{traff:.0f} %</b><span>Träffar</span></div></div>
+<p class="lede"><b class="{tecken}">{diff:+,.0f} kr</b> sedan start</p>
+<div class="stats"><div class="stat"><b class="{"up" if roi >= 0 else "down"}">{roi:+.0f} %</b><span>Avkastning</span></div>
+<div class="stat"><b>{len(rattade)}</b><span>Avgjorda spel</span></div>
+<div class="stat"><b>{traff:.0f} %</b><span>Andel vinster</span></div></div>
 {_kurva(df) if not df.empty else '<p class="empty">Kurvan dyker upp när boten har rättat några spel.</p>'}
 {stopp}
-<p class="note" style="margin-top:12px">Under ca 200 rättade spel säger resultatet nästan ingenting – slumpen dominerar.</p>
+<p class="note" style="margin-top:12px">Allt är låtsaspengar. Först efter ca 200 avgjorda spel går det att säga om boten är bra – innan dess styr slumpen.</p>
 </section>
-<section><h2>Snart start</h2>
-<p class="note">Boten spelar på papper {config.SPELA_FORE_MIN} minuter före start när oddset ger minst
-{config.MIN_OVERVARDE*100:.0f} % övervärde.</p>
+<section id="lopp"><h2>Snart start</h2>
+<p class="note">Lopp som startar inom 45 minuter. Boten spelar bara när ATG:s odds är minst
+{config.MIN_OVERVARDE*100:.0f} % bättre än vad hästens chans motiverar.</p>
 <div class="cards">{lopp_html}</div></section>
-<section><h2>V-spel</h2><div class="cards">{sys_html}</div></section>
-<section><h2>Senaste spelen</h2>{senaste}</section>
-<section><h2>Per speltyp</h2>{typer}</section>
-<section><h2>Hur smart är boten?</h2>{smart}</section>
-<section><h2>AI-forskaren</h2>
-<p class="note">Varje vecka testas en idé. Reglerna för vad som räknas som vinst skrivs ner och laddas upp <i>innan</i>
-testet körs, så att slumpen inte kan lura boten.</p><div class="cards">{forsk}</div></section>
-<section><h2>Så funkar det</h2>
-<p>Under tävlingsdagen vaktar boten varje minut. Från 30 minuter före start loggar den oddsen för att se vart pengarna
-strömmar, och Claude betygsätter ATG:s kommentar om varje häst. 1–3 minuter före start räknar den ut varje hästs
-chans och spelar bara när ATG:s odds är högre än chansen motiverar. Den letar också efter lägen där ATG:s olika
-potter är oense med varandra (korspool). V-system spelas bara på jackpottdagar. Efter loppen rättar den sig själv,
-och varje måndag lär den sig av förra veckans lopp.</p>
-<p class="note">Allt är låtsaspengar. ATG behåller 15–35 % av varje insats, så de flesta förlorar i längden.
+<section id="v"><h2>V-spel</h2>
+<p class="note">Boten visar alltid sitt förslag, men {"pappersspelar bara på jackpottdagar" if config.SYSTEM_BARA_JACKPOTT else "pappersspelar när värdet räcker"}.</p>
+<div class="cards">{sys_html}</div></section>
+<section id="historik"><h2>Senaste spelen</h2>{senaste}
+<h3 style="margin-top:24px">Per speltyp</h3>{typer}</section>
+<section id="hjarna"><h2>Hur smart är boten?</h2>{smart}
+<h3 style="margin-top:24px">AI-forskaren</h3>
+<p class="note">Varje måndag testas en idé. Reglerna skrivs ner och laddas upp <i>innan</i> testet körs, så att slumpen inte kan lura boten.</p>
+<div class="cards">{forsk}</div></section>
+<section id="hjalp"><h2>Hjälp och ordlista</h2>
+<details><summary>Vad gör boten?</summary><p>Tre gånger om dagen (09:40, 14:10, 18:40) startar den ett vaktpass. Från 30 minuter
+före varje svenskt travlopp kollar den oddsen varje minut. {config.SPELA_FORE_MIN} minuter före start räknar den ut varje hästs chans och
+"spelar" med låtsaspengar om oddset är för bra för att stämma. Efter loppet rättar den sig själv.</p></details>
+<details><summary>Odds</summary><p>Hur mycket du får tillbaka per krona. Odds 4,00 betyder att 10 kr blir 40 kr om du vinner.</p></details>
+<details><summary>Chans och övervärde</summary><p>Boten räknar ut varje hästs chans. Har en häst 30 % chans men odds 4,00 får
+du i snitt tillbaka 0,30 × 4 = 1,20 kr per satsad krona – alltså +20 % övervärde. Boten spelar bara när övervärdet är minst
+{config.MIN_OVERVARDE*100:.0f} %.</p></details>
+<details><summary>Vinnare, Plats, Trio, Tvilling</summary><p><b>Vinnare</b>: hästen ska vinna. <b>Plats</b>: hästen ska komma topp 3
+(topp 2 om 5–7 hästar startar). <b>Tvilling</b>: två hästar ska bli etta och tvåa, i valfri ordning. <b>Trio</b>: tre hästar i exakt
+rätt ordning.</p></details>
+<details><summary>🔀 Korspool</summary><p>ATG har en pott för varje spelform. Ibland är potterna oense – t.ex. betalar Plats mer än
+vinnaroddsen säger att den borde. Då spelar boten utan att behöva lita på sin egen spådom.</p></details>
+<details><summary>▲ Spelas ner</summary><p>Oddset har sjunkit de senaste minuterna, alltså strömmar pengar in på hästen. Sena pengar
+kommer ofta från folk som vet något. ▼ betyder tvärtom.</p></details>
+<details><summary>AI-betyg</summary><p>Claude läser ATG:s korta kommentar om hästen (t.ex. "3 segrar på 4 starter på banan") och
+ger −2 till +2.</p></details>
+<details><summary>Streck och understreckad</summary><p>Streck = hur stor andel av alla V-spelare som valt hästen. Har en häst högre chans
+än streck är den understreckad – vinner den delar färre på potten.</p></details>
+<details><summary>Värdeindex och jackpott</summary><p>Hur mycket bättre botens V-system är än en genomsnittsspelares. ATG tar
+35 % på V-spel, så det behövs ca 1,5 för att gå plus. På jackpottdagar finns extra pengar i potten och kravet blir lägre.</p></details>
+<details><summary>Varför spelar boten så sällan?</summary><p>För att de flesta lopp saknar värde. ATG tar 15–35 % av varje insats,
+så den som spelar på allt förlorar. Att avstå är en del av strategin.</p></details>
+<details><summary>Notiser i mobilen</summary><p>Starka spel (+{config.NOTIS_OVERVARDE*100:.0f} % eller mer) och dagens resultat kommer
+som notis i appen ntfy.</p></details>
+<p class="note" style="margin-top:16px">Allt är låtsaspengar. De flesta som spelar på trav förlorar i längden.
 Spela ansvarsfullt – Stödlinjen 020-81 91 00.</p></section>
 </main></body></html>"""
     Path(ut).parent.mkdir(parents=True, exist_ok=True)
