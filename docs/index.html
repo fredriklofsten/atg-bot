@@ -67,6 +67,8 @@ th:first-child,td:first-child{text-align:left}
 th{font-weight:600;color:var(--soft);font-size:13px}
 .warn{background:color-mix(in srgb,var(--down) 12%,var(--paper));border-radius:12px;padding:12px 14px;margin-top:14px}
 .empty{color:var(--soft);font-style:italic}
+.tag{font-size:12px;font-weight:700;padding:1px 7px;border-radius:999px;background:var(--chip);color:var(--soft);white-space:nowrap}
+.tag.up{color:var(--up)}.tag.down{color:var(--down)}
 </style></head><body>
 <div class="top"><div class="top-in"><span class="brand">ATG-boten</span>
 <small>Uppdaterad 2026-11-15 21:58</small></div></div>
@@ -83,17 +85,22 @@ th{font-weight:600;color:var(--soft);font-size:13px}
 <p class="note" style="margin-top:12px">Under ca 200 rättade spel säger resultatet nästan ingenting – slumpen dominerar.</p>
 </section>
 <section><h2>Snart start</h2>
-<p class="note">Boten spelar på papper när det är under 14 minuter kvar och oddset ger minst
+<p class="note">Boten spelar på papper 3 minuter före start när oddset ger minst
 10 % övervärde.</p>
 <div class="cards"><p class="empty">Inga svenska travlopp inom 45 minuter just nu. Boten kollar var tionde minut.</p></div></section>
 <section><h2>V-spel</h2><div class="cards"><p class="empty">Inga V-spel inom tre timmar.</p></div></section>
 <section><h2>Senaste spelen</h2><p class="empty">Inga spel ännu.</p></section>
 <section><h2>Per speltyp</h2><p class="empty">Tabellen fylls när de första spelen är rättade.</p></section>
-<section><h2>Hur smart är boten?</h2><p>Tränad 2026-11-15 på 5 400 lopp. Testad på 1 080 lopp den aldrig sett.</p><div class="stats"><div class="stat"><b>-1.582</b><span>Marknaden</span></div><div class="stat"><b class="up">-1.575</b><span>Boten</span></div><div class="stat"><b>1.1</b><span>Vikt på oddsen</span></div></div><p class="note">Måttet visar hur väl chanserna stämde med vinnarna (närmare 0 är bättre). Boten slår marknaden en aning. I testet gav värdespelen +53 % på slutodds, men det är för optimistiskt: slutoddsen vet ingen i förväg. Det är låtsaskassan ovan som är det riktiga provet.</p><h3 style="margin-top:18px">Det boten tittar mest på</h3><ul class="list"><li><span>Ny häst (inga odds)</span><span class="r up">ökar chansen</span></li><li><span>Intjänade pengar</span><span class="r up">ökar chansen</span></li><li><span>Pengar per start</span><span class="r up">ökar chansen</span></li><li><span>Antal starter</span><span class="r down">minskar chansen</span></li><li><span>Ålder</span><span class="r down">minskar chansen</span></li><li><span>Långsammare rekord än fältet</span><span class="r down">minskar chansen</span></li><li><span>Tillägg (per 20 m)</span><span class="r down">minskar chansen</span></li><li><span>Andra ledet (auto)</span><span class="r down">minskar chansen</span></li></ul></section>
+<section><h2>Hur smart är boten?</h2><p>Tränad 2026-11-15 på 5 400 lopp. Testad på 1 080 lopp den aldrig sett.</p><div class="stats"><div class="stat"><b>-1.582</b><span>Marknaden</span></div><div class="stat"><b class="up">-1.575</b><span>Boten</span></div><div class="stat"><b>1.1</b><span>Vikt på oddsen</span></div></div><p class="note">Måttet visar hur väl chanserna stämde med vinnarna (närmare 0 är bättre). Boten slår marknaden en aning. I testet gav värdespelen +54 % på slutodds, men det är för optimistiskt: slutoddsen vet ingen i förväg. Det är låtsaskassan ovan som är det riktiga provet.</p><h3 style="margin-top:18px">Det boten tittar mest på</h3><ul class="list"><li><span>Ny häst (inga odds)</span><span class="r up">ökar chansen</span></li><li><span>Pengar per start</span><span class="r up">ökar chansen</span></li><li><span>Intjänade pengar</span><span class="r up">ökar chansen</span></li><li><span>Antal starter</span><span class="r down">minskar chansen</span></li><li><span>Tillägg (per 20 m)</span><span class="r down">minskar chansen</span></li><li><span>Saknar rekord</span><span class="r up">ökar chansen</span></li><li><span>Ålder</span><span class="r down">minskar chansen</span></li><li><span>Andra ledet (auto)</span><span class="r down">minskar chansen</span></li></ul></section>
+<section><h2>AI-forskaren</h2>
+<p class="note">Varje vecka testas en idé. Reglerna för vad som räknas som vinst skrivs ner och laddas upp <i>innan</i>
+testet körs, så att slumpen inte kan lura boten.</p><div class="cards"><p class="empty">Första testet planeras på måndag.</p></div></section>
 <section><h2>Så funkar det</h2>
-<p>Var tionde minut under tävlingsdagen hämtar boten startlistor, odds och streck från ATG. Den räknar ut varje hästs
-vinstchans och spelar bara när ATG:s odds är högre än chansen motiverar. Efter loppen rättar den sig själv.
-Varje måndag lär den sig av förra veckans lopp.</p>
+<p>Under tävlingsdagen vaktar boten varje minut. Från 30 minuter före start loggar den oddsen för att se vart pengarna
+strömmar, och Claude betygsätter ATG:s kommentar om varje häst. 1–3 minuter före start räknar den ut varje hästs
+chans och spelar bara när ATG:s odds är högre än chansen motiverar. Den letar också efter lägen där ATG:s olika
+potter är oense med varandra (korspool). V-system spelas bara på jackpottdagar. Efter loppen rättar den sig själv,
+och varje måndag lär den sig av förra veckans lopp.</p>
 <p class="note">Allt är låtsaspengar. ATG behåller 15–35 % av varje insats, så de flesta förlorar i längden.
 Spela ansvarsfullt – Stödlinjen 020-81 91 00.</p></section>
 </main></body></html>
