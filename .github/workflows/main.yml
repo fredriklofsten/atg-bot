@@ -22,13 +22,16 @@ jobs:
       NTFY_AMNE: ${{ secrets.NTFY_AMNE }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main          # alltid senaste versionen, även om körningen stått i kö
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: pip
       - run: pip install -r requirements.txt
-      - name: Git-identitet
+      - name: Git-identitet och senaste data
         run: |
+          git pull -q --ff-only origin main
           git config user.name "atg-boten"
           git config user.email "atg-boten@users.noreply.github.com"
       - name: Måndag förmiddag – lär om och låt AI-forskaren testa veckans idé

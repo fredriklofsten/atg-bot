@@ -20,9 +20,31 @@ class Papperskassa:
         self.fil = Path(data_dir) / "papperspel.csv"
         self.data_dir = data_dir
         self.df = pd.read_csv(self.fil, dtype={"val": str}) if self.fil.exists() else pd.DataFrame(columns=KOLUMNER)
+        # Spel som räddats efter ett fel (data/papperspel_aterstall*.csv) läggs tillbaka om de saknas
+        for f in sorted(self.fil.parent.glob("papperspel_aterstall*.csv")):
+            self._lagg_till_saknade(pd.read_csv(f, dtype={"val": str}))
+
+    @staticmethod
+    def _nyckel(df):
+        return df.spel_id.astype(str) + "|" + df.typ.astype(str) + "|" + df.val.astype(str)
+
+    def _lagg_till_saknade(self, andra):
+        """Lägg till spel från 'andra' som inte finns i minnet. Inget spel ska kunna försvinna."""
+        if andra is None or andra.empty:
+            return
+        saknas = andra[~self._nyckel(andra).isin(set(self._nyckel(self.df)))] if not self.df.empty else andra
+        if len(saknas):
+            self.df = pd.concat([saknas, self.df], ignore_index=True).sort_values("skapad", kind="stable")
+            self.df = self.df.reset_index(drop=True)
+            self.df["id"] = range(1, len(self.df) + 1)
 
     def spara(self):
         self.fil.parent.mkdir(parents=True, exist_ok=True)
+        if self.fil.exists():      # skriv aldrig över spel som finns på disk men inte i minnet
+            try:
+                self._lagg_till_saknade(pd.read_csv(self.fil, dtype={"val": str}))
+            except Exception:
+                pass
         self.df.to_csv(self.fil, index=False)
 
     def bankrulle(self):
