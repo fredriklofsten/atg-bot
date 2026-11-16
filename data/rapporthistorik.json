@@ -1,10 +1,10 @@
 [
  {
   "datum": "2026-11-16",
-  "antal_lopp": 5400,
-  "testlopp": 1080,
-  "loglik_marknad": -1.5824407135613243,
-  "loglik_bot": -1.5753393947395782,
-  "loglik_fundamental": -1.810642449058408
+  "antal_lopp": 5440,
+  "testlopp": 1088,
+  "loglik_marknad": -1.690814127242376,
+  "loglik_bot": -1.6873437821820947,
+  "loglik_fundamental": -1.9374310799992078
  }
 ]

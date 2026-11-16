@@ -259,6 +259,24 @@ def las_loggar(data_dir="data"):
     return ut
 
 
+def las_spelodds(data_dir="data", min_kvar=2.0, max_kvar=8.0):
+    """Oddsen som gällde när boten faktiskt spelar (cirka 3 min före start), ur vaktlägets oddslogg.
+    Returnerar {(lopp_id, nr): odds}. Används för ett ärligare test än slutoddsen."""
+    import json
+    ut = {}
+    for f in sorted((Path(data_dir) / "oddslogg").glob("*.json")):
+        try:
+            logg = json.loads(f.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        for lopp_id, hastar in logg.items():
+            for nr, punkter in hastar.items():
+                ok = [p for p in punkter if p[1] and p[1] > 1 and min_kvar <= p[0] <= max_kvar]
+                if ok:
+                    ut[(lopp_id, int(nr))] = float(min(ok, key=lambda p: p[0])[1])   # senaste mätningen före spel
+    return ut
+
+
 def bygg_dataset(dagar, data_dir="data", offline=False, visa=True):
     """Hämtar alla färdiga lopp för angivna dagar och sparar data/dataset.csv."""
     klient = ATGKlient(data_dir, offline=offline)

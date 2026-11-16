@@ -49,8 +49,11 @@ def anpassa_logit(X, y, start, l2):
 
 
 def rena_lopp(df):
-    """Behåll bara lopp med exakt en vinnare och minst 4 hästar."""
-    df = df.dropna(subset=["vann"])
+    """Behåll bara lopp med exakt en vinnare och minst 4 hästar.
+    Hästar utan placering (galopp, diskad, bruten) startade och förlorade – de ska vara kvar i loppet.
+    Tas de bort ser de andra hästarna ut att ha bättre chans än oddsen säger, och testet blir för snällt."""
+    df = df.copy()
+    df["vann"] = pd.to_numeric(df["vann"], errors="coerce").fillna(0)
     ok = df.groupby("lopp_id")["vann"].transform("sum") == 1
     ok &= df.groupby("lopp_id")["nr"].transform("count") >= 4
     return df[ok].sort_values(["datum", "lopp_id", "nr"]).reset_index(drop=True)
@@ -177,7 +180,35 @@ class Modell:
             r[f"sim_{int(troskel*100)}"] = {"spel": int(spel.sum()), "insats": float(insats),
                                            "tillbaka": float(vinst),
                                            "roi": float((vinst - insats) / insats) if insats else 0.0}
+        r.update(self._sim_spelodds(test))
         return r
+
+    def _sim_spelodds(self, test):
+        """Ärligt test: boten bestämmer sig på oddsen som loggades ~3 min före start (det den vet
+        när den spelar) och får betalt efter slutoddsen (så fungerar ATG:s pooler)."""
+        from features import las_spelodds
+        logg = las_spelodds()
+        tidiga = pd.Series([logg.get((l, int(n))) for l, n in zip(test["lopp_id"], test["nr"])],
+                           index=test.index, dtype=float)
+        # bara lopp där nästan alla hästar har loggade odds
+        tackning = tidiga.notna().groupby(test["lopp_id"]).transform("mean")
+        t = test[tackning >= 0.8].copy()
+        ut = {"sim_logg_lopp": int(t["lopp_id"].nunique())}
+        if t.empty:
+            return ut
+        slut = pd.to_numeric(t["odds"], errors="coerce").values
+        t["odds"] = tidiga[t.index].fillna(t["odds"])
+        ps = self.p_slutlig(t)
+        y = t["vann"].values == 1
+        ev = ps * t["odds"].values - 1
+        for troskel in (0.0, 0.1, 0.2, 0.3):
+            spel = (ev > troskel) & (ps >= config.MIN_SANNOLIKHET) & np.isfinite(slut)
+            insats = 10 * spel.sum()
+            vinst = 10 * (slut * (spel & y)).sum()
+            ut[f"sim_logg_{int(troskel*100)}"] = {"spel": int(spel.sum()), "insats": float(insats),
+                                                  "tillbaka": float(vinst),
+                                                  "roi": float((vinst - insats) / insats) if insats else 0.0}
+        return ut
 
     def spara(self, fil="models/modell.json"):
         Path(fil).parent.mkdir(parents=True, exist_ok=True)
@@ -215,8 +246,16 @@ def skriv_rapport(r, m):
         s = r[k]
         print(f"  övervärde > {k[4:]:>2} %: {s['spel']:5d} spel, insats {s['insats']:8.0f} kr, "
               f"tillbaka {s['tillbaka']:8.0f} kr, ROI {s['roi']*100:+.1f} %")
-    print("  VARNING: simuleringen använder slutoddsen, som du inte vet när du spelar. Sena pengar")
-    print("  ändrar oddsen och din egen insats sänker dem. Verkligheten blir sämre – lita på pappersspelet.")
+    print("  VARNING: simuleringen ovan använder slutoddsen, som du inte vet när du spelar.")
+    n = r.get("sim_logg_lopp", 0)
+    print(f"\nÄrligt test: beslut på oddsen 3 min före start, betalt efter slutodds ({n} lopp med oddslogg):")
+    if n < 300:
+        print(f"  För få lopp ännu ({n} av minst 300). Vaktläget samlar fler varje dag.")
+    for k in ("sim_logg_0", "sim_logg_10", "sim_logg_20", "sim_logg_30"):
+        if k in r:
+            s = r[k]
+            print(f"  övervärde > {k[9:]:>2} %: {s['spel']:5d} spel, insats {s['insats']:8.0f} kr, "
+                  f"tillbaka {s['tillbaka']:8.0f} kr, ROI {s['roi']*100:+.1f} %")
     print("\nVad modellen lärt sig (positivt = ökar vinstchansen):")
     vikter = sorted(zip(FEATURES, m.w1), key=lambda t: -abs(t[1]))
     for namn, w in vikter[:12]:
