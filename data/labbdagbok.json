@@ -1,0 +1,33 @@
+[
+ {
+  "id": "l2_svagare",
+  "datum": "2026-11-16",
+  "planerad": "2026-11-16",
+  "text": "Mindre återhållsam modell (L2 0,3 i stället för 1,0) gissar bättre",
+  "regel": "Införs bara om snittet förbättras med minst 0.002 OCH idén är bättre i minst 4 av de 5 senaste månaderna.",
+  "manader": [
+   "2026-07",
+   "2026-08",
+   "2026-09",
+   "2026-10",
+   "2026-11"
+  ],
+  "fore": [
+   -1.6070036372702037,
+   -1.5749167147761802,
+   -1.5521840709605332,
+   -1.560199454482406,
+   -1.6199735328629228
+  ],
+  "efter": [
+   -1.6068445172252181,
+   -1.5748892618910981,
+   -1.5521988326764737,
+   -1.5601990986086995,
+   -1.6199791579698026
+  ],
+  "snitt_forbattring": 3.330839619075654e-05,
+  "battre_manader": 3,
+  "infors": false
+ }
+]
