@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="sv"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ATG-boten</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ATG-boten · ATG-boten</title>
 <meta http-equiv="refresh" content="300">
 <link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="ikon.png"><link rel="icon" href="ikon.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#16261d">
@@ -83,64 +83,64 @@ details summary::-webkit-details-marker{display:none}
 details summary::before{content:"＋ ";color:var(--acc)}
 details[open] summary::before{content:"－ "}
 details p{margin:8px 0 0;color:var(--soft);font-size:15px}
+body{padding-bottom:84px}
+:root{--s1:#1f7a4d;--s2:#c27c00}
+@media (prefers-color-scheme:dark){:root{--s1:#2e9a66;--s2:#b9852a}}
+.bottom{position:fixed;left:0;right:0;bottom:0;z-index:9;background:var(--paper);border-top:1px solid var(--line);
+padding-bottom:env(safe-area-inset-bottom)}
+.bottom div{max-width:680px;margin:auto;display:grid;grid-template-columns:repeat(5,1fr)}
+.bottom a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 0 10px;text-decoration:none;
+color:var(--soft);font-size:12px;font-weight:600}
+.bottom a span{font-size:21px;line-height:1}
+.bottom a.aktiv{color:var(--acc)}
+.knapp{display:inline-block;margin-top:12px;text-decoration:none;background:var(--acc);color:#fff;font-weight:700;
+border-radius:999px;padding:9px 16px;font-size:15px}
+.race{background:var(--paper);border-radius:14px;margin:10px 0;padding:0}
+.race>summary{padding:13px 16px;list-style:none;cursor:pointer}
+.race>summary::-webkit-details-marker{display:none}
+.race>summary::before,.race[open]>summary::before{content:none!important}
+.race[open]>summary{border-bottom:1px solid var(--line)}
+.rhead{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.rbody{padding:4px 16px 14px}
+.starter{border-bottom:1px solid var(--line);padding:11px 0}
+.starter:last-child{border-bottom:0}
+.srad{display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:start}
+.sinfo{font-size:13.5px;color:var(--soft);line-height:1.45}
+.sinfo b{color:var(--ink);font-weight:600}
+.odds{text-align:right;font-variant-numeric:tabular-nums;font-size:14px;color:var(--soft);white-space:nowrap}
+.odds b{display:block;font:800 17px/1.2 "Bricolage Grotesque",sans-serif;color:var(--ink)}
+.skal{margin-top:6px;display:flex;flex-wrap:wrap;gap:5px}
+.skal span{font-size:12.5px;padding:2px 8px;border-radius:999px;background:var(--chip)}
+.skal .plus{color:var(--up)}.skal .minus{color:var(--down)}
+.vinst{background:color-mix(in srgb,var(--up) 14%,var(--paper))}
+.dag{margin:22px 0 4px;font:800 18px/1.2 "Bricolage Grotesque",sans-serif}
+.figur{background:var(--paper);border-radius:14px;padding:14px 12px 10px;margin-top:14px}
+.figur h3{margin:0 4px 2px}
+.figur .note{margin:0 4px 6px}
+.figur svg{display:block;width:100%;height:auto;overflow:visible}
+.figur svg text{font:11px "Figtree",sans-serif;fill:var(--soft)}
+.figur svg .lbl{font-weight:700}
 .tag{font-size:12px;font-weight:700;padding:1px 7px;border-radius:999px;background:var(--chip);color:var(--soft);white-space:nowrap}
 .tag.up{color:var(--up)}.tag.down{color:var(--down)}
 </style></head><body>
-<div class="top"><div class="top-in"><span class="brand">ATG-boten</span>
-<small>Uppdaterad 2026-11-15 21:58</small></div></div>
-<nav class="tabs"><div><a href="#kassa">Kassan</a><a href="#lopp">Snart start</a><a href="#v">V-spel</a>
-<a href="#historik">Historik</a><a href="#hjarna">Hjärnan</a><a href="#hjalp">Hjälp</a></div></nav>
-<main>
-<section id="kassa">
-<div class="nu">😴 <b>Boten vilar.</b> Nästa vaktpass startar i morgon kl 09:40.</div>
+<div class="top"><div class="top-in"><span class="brand">ATG-boten</span><small>Uppdaterad 2026-11-15 21:58</small></div></div>
+<main><section>
+<div class="nu">😴 <b>Boten vilar.</b> Nästa vaktpass startar kl 14:10.</div>
 <p class="kicker" style="margin-top:18px">Låtsaskassan · startade med 1 000 kr</p>
 <h1>1 000 kr</h1>
 <p class="lede"><b class="up">+0 kr</b> sedan start</p>
 <div class="stats"><div class="stat"><b class="up">+0 %</b><span>Avkastning</span></div>
 <div class="stat"><b>0</b><span>Avgjorda spel</span></div>
 <div class="stat"><b>0 %</b><span>Andel vinster</span></div></div>
-<p class="empty">Kurvan dyker upp när boten har rättat några spel.</p>
 
-<p class="note" style="margin-top:12px">Allt är låtsaspengar. Först efter ca 200 avgjorda spel går det att säga om boten är bra – innan dess styr slumpen.</p>
+
+<a class="knapp" href="utveckling.html">Se hela utvecklingen →</a>
 </section>
-<section id="lopp"><h2>Snart start</h2>
-<p class="note">Lopp som startar inom 45 minuter. Boten spelar bara när ATG:s odds är minst
-10 % bättre än vad hästens chans motiverar.</p>
-<div class="cards"><p class="empty">Inga svenska travlopp inom 45 minuter just nu. Boten kollar var tionde minut.</p></div></section>
-<section id="v"><h2>V-spel</h2>
-<p class="note">Boten visar alltid sitt förslag, men pappersspelar bara på jackpottdagar.</p>
-<div class="cards"><p class="empty">Inga V-spel inom tre timmar.</p></div></section>
-<section id="historik"><h2>Senaste spelen</h2><p class="empty">Inga spel ännu.</p>
-<h3 style="margin-top:24px">Per speltyp</h3><p class="empty">Tabellen fylls när de första spelen är rättade.</p></section>
-<section id="hjarna"><h2>Hur smart är boten?</h2><p class="plain">✅ Botens chanser träffar <b>0.7 % bättre</b> än oddsen på lopp den aldrig sett.</p><p class="note">Det låter lite  men oddsen är summan av vad tusentals spelare tror – att slå dem alls är svårt. Tränad 2026-11-15 på 5 400 lopp.</p><details><summary>Siffrorna för den som vill nörda</summary><p>Snitt-loglik för vinnaren: marknaden -1.5824, boten -1.5753 (närmare 0 = bättre). Boten väger egen analys 0.16 och oddsen 1.06. I testet gav värdespelen +54 % på slutodds – för optimistiskt, eftersom slutoddsen inte är kända när man spelar. Låtsaskassan är det riktiga provet.</p></details><h3 style="margin-top:18px">Det boten tittar mest på</h3><ul class="list"><li><span>Ny häst (inga odds)</span><span class="r up">ökar chansen</span></li><li><span>Pengar per start</span><span class="r up">ökar chansen</span></li><li><span>Intjänade pengar</span><span class="r up">ökar chansen</span></li><li><span>Antal starter</span><span class="r down">minskar chansen</span></li><li><span>Tillägg (per 20 m)</span><span class="r down">minskar chansen</span></li><li><span>Saknar rekord</span><span class="r up">ökar chansen</span></li><li><span>Ålder</span><span class="r down">minskar chansen</span></li><li><span>Andra ledet (auto)</span><span class="r down">minskar chansen</span></li></ul>
-<h3 style="margin-top:24px">AI-forskaren</h3>
-<p class="note">Varje måndag testas en idé. Reglerna skrivs ner och laddas upp <i>innan</i> testet körs, så att slumpen inte kan lura boten.</p>
-<div class="cards"><p class="empty">Första testet planeras på måndag.</p></div></section>
-<section id="hjalp"><h2>Hjälp och ordlista</h2>
-<details><summary>Vad gör boten?</summary><p>Tre gånger om dagen (09:40, 14:10, 18:40) startar den ett vaktpass. Från 30 minuter
-före varje svenskt travlopp kollar den oddsen varje minut. 3 minuter före start räknar den ut varje hästs chans och
-"spelar" med låtsaspengar om oddset är för bra för att stämma. Efter loppet rättar den sig själv.</p></details>
-<details><summary>Odds</summary><p>Hur mycket du får tillbaka per krona. Odds 4,00 betyder att 10 kr blir 40 kr om du vinner.</p></details>
-<details><summary>Chans och övervärde</summary><p>Boten räknar ut varje hästs chans. Har en häst 30 % chans men odds 4,00 får
-du i snitt tillbaka 0,30 × 4 = 1,20 kr per satsad krona – alltså +20 % övervärde. Boten spelar bara när övervärdet är minst
-10 %.</p></details>
-<details><summary>Vinnare, Plats, Trio, Tvilling</summary><p><b>Vinnare</b>: hästen ska vinna. <b>Plats</b>: hästen ska komma topp 3
-(topp 2 om 5–7 hästar startar). <b>Tvilling</b>: två hästar ska bli etta och tvåa, i valfri ordning. <b>Trio</b>: tre hästar i exakt
-rätt ordning.</p></details>
-<details><summary>🔀 Korspool</summary><p>ATG har en pott för varje spelform. Ibland är potterna oense – t.ex. betalar Plats mer än
-vinnaroddsen säger att den borde. Då spelar boten utan att behöva lita på sin egen spådom.</p></details>
-<details><summary>▲ Spelas ner</summary><p>Oddset har sjunkit de senaste minuterna, alltså strömmar pengar in på hästen. Sena pengar
-kommer ofta från folk som vet något. ▼ betyder tvärtom.</p></details>
-<details><summary>AI-betyg</summary><p>Claude läser ATG:s korta kommentar om hästen (t.ex. "3 segrar på 4 starter på banan") och
-ger −2 till +2.</p></details>
-<details><summary>Streck och understreckad</summary><p>Streck = hur stor andel av alla V-spelare som valt hästen. Har en häst högre chans
-än streck är den understreckad – vinner den delar färre på potten.</p></details>
-<details><summary>Värdeindex och jackpott</summary><p>Hur mycket bättre botens V-system är än en genomsnittsspelares. ATG tar
-35 % på V-spel, så det behövs ca 1,5 för att gå plus. På jackpottdagar finns extra pengar i potten och kravet blir lägre.</p></details>
-<details><summary>Varför spelar boten så sällan?</summary><p>För att de flesta lopp saknar värde. ATG tar 15–35 % av varje insats,
-så den som spelar på allt förlorar. Att avstå är en del av strategin.</p></details>
-<details><summary>Notiser i mobilen</summary><p>Starka spel (+30 % eller mer) och dagens resultat kommer
-som notis i appen ntfy.</p></details>
-<p class="note" style="margin-top:16px">Allt är låtsaspengar. De flesta som spelar på trav förlorar i längden.
-Spela ansvarsfullt – Stödlinjen 020-81 91 00.</p></section>
-</main></body></html>
+<section><h2>Snart start</h2>
+<p class="note">Botens nästa beslut. Den spelar bara när ATG:s odds är minst 10 % bättre än chansen motiverar.</p>
+<div class="cards"><p class="empty">Inga lopp inom 45 minuter just nu.</p></div>
+<a class="knapp" href="lopp.html">Alla lopp idag med startlistor →</a></section>
+<section><h2>Dagens spel</h2><p class="empty">Inga spel ännu idag.</p></section>
+<section><p class="note">Allt är låtsaspengar. Först efter ca 200 avgjorda spel går det att säga om boten är bra.</p></section></main>
+<nav class="bottom"><div><a href="index.html" class="aktiv"><span>🏠</span>Översikt</a><a href="lopp.html" class=""><span>🏇</span>Lopp</a><a href="vecka.html" class=""><span>📅</span>Veckan</a><a href="utveckling.html" class=""><span>📈</span>Utveckling</a><a href="hjalp.html" class=""><span>❓</span>Hjälp</a></div></nav>
+</body></html>

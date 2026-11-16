@@ -94,6 +94,8 @@ def spel_i_kalender(kal, typer=None):
         if typer and typ not in typer:
             continue
         for g in lista:
+            if not isinstance(g, dict) or not g.get("id"):
+                continue                       # framtida dagar kan ha spel utan id än
             bana_ids = g.get("tracks") or []
             bana = banor.get(bana_ids[0]) if bana_ids else None
             ut.append({**g, "typ": typ,

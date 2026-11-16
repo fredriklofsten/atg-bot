@@ -64,6 +64,11 @@ def cmd_trana(a):
     rapport["vikter"] = dict(zip(m.features_namn(), [float(w) for w in m.w1]))
     rapport["blandning"] = [float(m.w2[0]), float(m.w2[1])]
     Path("models/rapport.json").write_text(json.dumps(rapport, ensure_ascii=False, indent=1), encoding="utf-8")
+    hist = Path(DATA) / "rapporthistorik.json"
+    h = json.loads(hist.read_text(encoding="utf-8")) if hist.exists() else []
+    h = [x for x in h if x.get("datum") != rapport["datum"]] + [{k: rapport[k] for k in (
+        "datum", "antal_lopp", "testlopp", "loglik_marknad", "loglik_bot", "loglik_fundamental")}]
+    hist.write_text(json.dumps(h, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"\nModellen sparad i {MODELL_FIL}. Nästa steg: python bot.py tips")
 
 
@@ -236,11 +241,51 @@ def cmd_vakt(a):
     loggfil = Path(DATA) / "oddslogg" / f"{idag}.json"
     loggfil.parent.mkdir(parents=True, exist_ok=True)
     logg = json.loads(loggfil.read_text(encoding="utf-8")) if loggfil.exists() else {}
-    kal, t_kal, t_bygg, t_analys = None, 0.0, 0.0, {}
+    kal, t_kal, t_bygg, t_analys, t_prog, t_vecka = None, 0.0, 0.0, {}, 0.0, 0.0
+    progfil, veckfil = Path(DATA) / "program.json", Path(DATA) / "vecka.json"
+    program = json.loads(progfil.read_text(encoding="utf-8")) if progfil.exists() else {}
+    if program.get("datum") != idag:
+        program = {"datum": idag, "lopp": {}}
     print(f"Vaktar till {slut:%H:%M}.")
+
+    def logga_prognos(prog):
+        f = Path(DATA) / "prognoser.csv"
+        pd.DataFrame([{"datum": idag, "lopp_id": prog["lopp_id"], "nr": h["nr"], "p": round(h["p"], 5),
+                       "pm": round(h["pm"], 5), "odds": h["odds"]} for h in prog["hastar"]]).to_csv(
+            f, mode="a", header=not f.exists(), index=False)
+
+    def uppdatera_resultat():
+        """Fyll i vinnare för loppen boten har gjort prognos på (för grafen 'bot mot oddsen')."""
+        pf, rf = Path(DATA) / "prognoser.csv", Path(DATA) / "resultat.csv"
+        if not pf.exists():
+            return
+        klara = set(pd.read_csv(rf).lopp_id) if rf.exists() else set()
+        status_lopp = {l["lopp_id"]: l for l in lopp_i_kalender(kal)}
+        nya = []
+        for lid in set(pd.read_csv(pf).lopp_id) - klara:
+            l = status_lopp.get(lid)
+            if not l or l["status"] != "results":
+                continue
+            sp = klient.spel(f"vinnare_{lid}", farsk=True)
+            vinn = [st["number"] for lp in (sp or {}).get("races", []) for st in lp.get("starts", [])
+                    if (st.get("result") or {}).get("place") == 1]
+            if vinn:
+                nya.append({"lopp_id": lid, "vinnare": vinn[0]})
+                if lid in program["lopp"]:
+                    try:
+                        program["lopp"][lid] = motor.program_lopp(klient, modell, {**l}, spel=sp) or program["lopp"][lid]
+                    except Exception as e:
+                        print(f"  (kunde inte uppdatera {lid}: {e})")
+        if nya:
+            pd.DataFrame(nya).to_csv(rf, mode="a", header=not rf.exists(), index=False)
 
     def spara_allt(medd):
         kassa.ratta()
+        try:
+            uppdatera_resultat()
+        except Exception as e:
+            print(f"  (resultat kunde inte uppdateras: {e})")
+        progfil.write_text(json.dumps(program, ensure_ascii=False), encoding="utf-8")
         status["senast"] = motor.nu().strftime("%Y-%m-%d %H:%M")
         status["stopp"] = kassa.forlust_senaste_veckan() > config.MAX_FORLUST_PER_VECKA
         statusfil.write_text(json.dumps(status, ensure_ascii=False), encoding="utf-8")
@@ -264,6 +309,30 @@ def cmd_vakt(a):
         bank = kassa.bankrulle()
         stopp = kassa.forlust_senaste_veckan() > config.MAX_FORLUST_PER_VECKA
         rorelse_alla, ai_alla = las_loggar(DATA)
+        # Dagens program (alla lopp, för appen) var 20:e minut
+        if t0 - t_prog > 1200:
+            # max 6 lopp per minut (närmast start först) så att vaktandet aldrig blir efter
+            att_gora = [l for l in sorted(lopp_i_kalender(kal), key=lambda l: l["starttid"])
+                        if not (l["status"] == "results" and l["lopp_id"] in program["lopp"])]
+            for l in att_gora[:6]:
+                try:
+                    pr = motor.program_lopp(klient, modell, l, rorelse=rorelse_alla, ai=ai_alla)
+                    if pr:
+                        program["lopp"][l["lopp_id"]] = pr
+                except Exception as e:
+                    print(f"  (program {l['lopp_id']}: {e})")
+            if len(att_gora) <= 6:
+                t_prog = time.time()
+            t_bygg = 0 if len(att_gora) <= 6 else t_bygg
+        # Veckans V-spel varannan timme
+        if t0 - t_vecka > 7200:
+            try:
+                veckfil.write_text(json.dumps({"skapad": motor.nu().strftime("%Y-%m-%d %H:%M"),
+                                               "spel": motor.veckans_vspel(klient, modell, bank)},
+                                              ensure_ascii=False), encoding="utf-8")
+            except Exception as e:
+                print(f"  (veckans V-spel: {e})")
+            t_vecka = time.time()
         for l, m in lopp:
             lid = l["lopp_id"]
             if not (0 < m <= config.ODDSLOGG_FRAN_MIN):
@@ -302,6 +371,13 @@ def cmd_vakt(a):
             status["lopp"][lid] = an
             if spela:
                 status["spelat_lopp"].append(lid)
+                try:   # spara botens chans för alla hästar precis när beslutet tas (för utvecklingsgrafen)
+                    prog = motor.program_lopp(klient, modell, l, spel=spel, rorelse=ror, ai=ai_alla)
+                    if prog:
+                        program["lopp"][lid] = prog
+                        logga_prognos(prog)
+                except Exception as e:
+                    print(f"  (prognos {lid}: {e})")
                 if ror:   # spara rörelsen som den såg ut när beslutet togs (för träningen)
                     f = Path(DATA) / "rorelse.csv"
                     pd.DataFrame([{"lopp_id": k[0], "nr": k[1], "rorelse": v} for k, v in ror.items()]).to_csv(

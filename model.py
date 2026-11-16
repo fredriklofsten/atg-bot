@@ -93,6 +93,24 @@ class Modell:
         X, _, _ = forbered_X(self._maskera(df), self.medel, self.std)
         return softmax_per_lopp(X @ self.w1, _grupper(df["lopp_id"].values))
 
+    def forklara(self, df, antal=3):
+        """Varför tror boten som den gör? Per häst: egenskaperna som drar mest upp/ner jämfört med
+        de andra hästarna i loppet. Returnerar lista (en per rad) av [(egenskap, bidrag), ...]."""
+        X, _, _ = forbered_X(self._maskera(df), self.medel, self.std)
+        bidrag = X * self.w1                                   # poäng per egenskap
+        start = _grupper(df["lopp_id"].values)
+        langd = np.diff(np.r_[start, len(df)])
+        snitt = np.repeat(np.add.reduceat(bidrag, start, axis=0) / langd[:, None], langd, axis=0)
+        rel = bidrag - snitt                                   # jämfört med de andra i loppet
+        xsnitt = np.repeat(np.add.reduceat(X, start, axis=0) / langd[:, None], langd, axis=0)
+        hog = X - xsnitt                                       # >0: hästen har högre värde än fältet
+        ut = []
+        for rad, h in zip(rel, hog):
+            ordning = np.argsort(-np.abs(rad))
+            ut.append([(FEATURES[j], float(rad[j]), 1 if h[j] > 0 else -1)
+                       for j in ordning[:antal] if abs(rad[j]) >= 0.12])
+        return ut
+
     def p_slutlig(self, df):
         """Botens vinstchans per häst. df måste vara sorterad på lopp_id."""
         pf = self.p_fundamental(df)

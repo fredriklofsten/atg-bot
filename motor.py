@@ -242,3 +242,86 @@ def notis(titel, text, prio="default"):
                       headers={"Title": titel.encode("utf-8"), "Priority": prio, "Tags": "horse"})
     except requests.RequestException as e:
         print(f"  (notis misslyckades: {e})")
+
+
+# ---------------- Program och veckans V-spel (för appen) ----------------
+def _num(x):
+    try:
+        x = float(x)
+        return None if math.isnan(x) else x
+    except (TypeError, ValueError):
+        return None
+
+
+def program_lopp(klient, modell, l, spel=None, rorelse=None, ai=None):
+    """Hela startlistan för ett lopp, som i programmet hos ett ombud, plus botens chans och tankar."""
+    spel = spel or klient.spel(f"vinnare_{l['lopp_id']}", farsk=l.get("status") != "results")
+    df = df_for_spel(spel, "vinnare", klient, rorelse, ai)
+    if df.empty:
+        return None
+    p = modell.p_slutlig(df)
+    pm = marknads_p(df).values
+    skal = modell.forklara(df)
+    rad0 = df.iloc[0]
+    hastar = []
+    for i, r in df.iterrows():
+        odds = _num(r["odds"])
+        hastar.append({
+            "nr": int(r["nr"]), "hast": r["hast"], "kon": r.get("kon", ""), "alder": int(r["alder"]),
+            "kusk": r["kusk"], "tranare": r.get("tranare", ""), "spar": int(r.get("spar") or r["nr"]),
+            "avstand": int(r.get("avstand") or r["distans"]), "rekord": r.get("rekord_txt", ""),
+            "form": r.get("form_txt", ""), "vila": _num(r.get("dagar_vila")), "skor": r.get("skor_txt", ""),
+            "intjanat": _num(r.get("intjanat")), "starter": int(r.get("liv_starter") or 0),
+            "seg": f"{int(r.get('liv_1') or 0)}-{int(r.get('liv_2') or 0)}-{int(r.get('liv_3') or 0)}",
+            "odds": odds, "p": float(p[i]), "pm": float(pm[i]),
+            "varde": (float(p[i]) * odds - 1) if odds else None,
+            "rorelse": None if r["rorelse_saknas"] else float(r["rorelse"]),
+            "ai": None if r["ai_saknas"] else float(r["ai_poang"]),
+            "skal": skal[i], "placering": _num(r.get("placering")),
+        })
+    fav = max(hastar, key=lambda h: h["p"])
+    mfav = max(hastar, key=lambda h: h["pm"])
+    varde = sorted([h for h in hastar if h["varde"] is not None and h["varde"] >= config.MIN_OVERVARDE
+                    and h["p"] >= config.MIN_SANNOLIKHET], key=lambda h: -h["varde"])
+    return {"lopp_id": l["lopp_id"], "bana": l["bana"], "nr": l["nr"], "start": l["starttid"],
+            "status": l.get("status"), "namn": rad0.get("loppnamn", ""), "distans": int(rad0["distans"]),
+            "startmetod": "autostart" if rad0["auto"] else "voltstart", "antal": len(hastar),
+            "omsattning": float(df["omsattning"].max() or 0), "hastar": hastar,
+            "favorit": fav["nr"], "marknadsfavorit": mfav["nr"], "varde": [h["nr"] for h in varde[:3]]}
+
+
+def veckans_vspel(klient, modell, bank, dagar=7):
+    """V-spel kommande dagar (svenska travbanor) med avdelningar, chanser, streck och förslag."""
+    from datetime import timedelta
+    from atg_api import spel_i_kalender
+    ut = []
+    for d in range(dagar):
+        dag = (nu().date() + timedelta(days=d)).isoformat()
+        kal = klient.kalender(dag)
+        for g in spel_i_kalender(kal, config.SYSTEMSPEL):
+            if g["land"] not in config.LANDER or g["sport"] != config.SPORT or g.get("status") == "results":
+                continue
+            if g["typ"] not in ("V85", "V86", "V64", "V65", "GS75", "V75"):   # bara de stora omgångarna i veckovyn
+                continue
+            try:
+                an = analysera_system(klient, modell, g, min(config.SYSTEM_BUDGET, bank * config.MAX_SYSTEM_ANDEL))
+            except Exception as e:              # en trasig omgång ska inte stoppa resten
+                print(f"  (kunde inte analysera {g.get('id')}: {e})")
+                continue
+            if not an:
+                continue
+            spel = klient.spel(g["id"])
+            df = df_for_spel(spel, g["typ"], klient)
+            if not df.empty:
+                df["p"] = modell.p_slutlig(df)
+                skal = modell.forklara(df)
+                extra = {(r.lopp_nr, r.nr): (r, s) for r, s in zip(df.itertuples(), skal)}
+                for a in an["avdelningar"]:
+                    for h in a["hastar"]:
+                        r, s = extra.get((a["lopp_nr"], h["nr"]), (None, []))
+                        if r is not None:
+                            h.update({"kusk": r.kusk, "form": getattr(r, "form_txt", ""), "skal": s,
+                                      "tranare": getattr(r, "tranare", ""), "spar": int(getattr(r, "spar", 0) or 0)})
+            an["dag"] = dag
+            ut.append(an)
+    return sorted(ut, key=lambda a: str(a["start"]))

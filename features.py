@@ -64,7 +64,7 @@ def form_fran_resultat(resultat, datum, nu_barfota, kusk_id, kusk_pct):
     tom = {"log_dagar_vila": float("nan"), "lang_vila": 0, "vila_saknas": 1, "galopp_senaste": 0,
            "galopp_andel5": 0.0, "disk_senaste": 0, "form5": float("nan"), "seger_senaste": 0,
            "km5": float("nan"), "log_odds_senaste": float("nan"), "forsta_barfota": 0,
-           "kuskbyte": 0, "kuskbyte_topp": 0}
+           "kuskbyte": 0, "kuskbyte_topp": 0, "form_txt": "", "dagar_vila": None}
     recs = [r for r in (resultat or {}).get("records", []) or []
             if r.get("date", "9999") < datum and g(r, "race", "type") != "qualifier"]
     if not recs:
@@ -91,6 +91,11 @@ def form_fran_resultat(resultat, datum, nu_barfota, kusk_id, kusk_pct):
         "log_odds_senaste": math.log(odds / 100) if odds and odds > 100 else float("nan"),
         "forsta_barfota": 1 if (nu_barfota and hade_skor) else 0,
         "kuskbyte": byte, "kuskbyte_topp": 1 if byte and kusk_pct >= 0.15 else 0,
+        # bara för visning (som i programmet hos ett ombud)
+        "form_txt": " ".join(("d" if r.get("disqualified") else
+                              (str(r.get("place")) if str(r.get("place")) in "123456789" and r.get("place") else "0")
+                              + ("g" if r.get("galloped") else "")) for r in fem),
+        "dagar_vila": dagar,
     }
 
 
@@ -193,6 +198,16 @@ def rader_fran_spel(spel, speltyp=None, klient=None, rorelse=None, ai=None):
                 "hemmabana": 1 if g(hast, "homeTrack", "id") and g(hast, "homeTrack", "id") == g(lopp, "track", "id") else 0,
                 "rorelse": rr if rr is not None else 0.0, "rorelse_saknas": 0 if rr is not None else 1,
                 "ai_poang": aa if aa is not None else 0.0, "ai_saknas": 0 if aa is not None else 1,
+                "tranare": f"{g(hast, 'trainer', 'firstName', default='')} {g(hast, 'trainer', 'lastName', default='')}".strip(),
+                "kon": {"mare": "sto", "stallion": "hingst", "gelding": "valack"}.get(hast.get("sex"), ""),
+                "spar": spar, "avstand": avst, "startmetod": "auto" if auto else "volt",
+                "rekord_txt": (f"{g(hast,'record','time','minutes', default=1)}.{g(hast,'record','time','seconds', default=0):02d},"
+                               f"{g(hast,'record','time','tenths', default=0)}{g(hast,'record','code', default='')}") if rek else "",
+                "intjanat": intj, "liv_starter": liv_st, "liv_1": v1, "liv_2": v2, "liv_3": v3,
+                "skor_txt": ("barfota runt om" if (g(hast, "shoes", "front", "hasShoe") is False and g(hast, "shoes", "back", "hasShoe") is False)
+                             else "barfota fram" if g(hast, "shoes", "front", "hasShoe") is False
+                             else "barfota bak" if g(hast, "shoes", "back", "hasShoe") is False else ""),
+                "loppnamn": lopp.get("name", ""),
                 "hast_id": hast.get("id"), "kusk_id": g(s, "driver", "id"), "bana_id": g(lopp, "track", "id"),
                 # --- marknad (vad spelarna tror) ---
                 "odds": vodds, "plats_odds": podds / 100 if podds else None,
