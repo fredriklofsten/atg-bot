@@ -61,6 +61,7 @@ p{margin:0 0 12px;max-width:62ch}
 .legend{font-size:13px;color:var(--soft);display:flex;gap:14px;margin-top:6px}
 .legend i{display:inline-block;width:12px;height:8px;border-radius:3px;background:var(--acc);margin-right:5px}
 .legend u{display:inline-block;width:3px;height:12px;background:var(--gold);margin-right:5px;vertical-align:-2px}
+table.nw td,table.nw th{white-space:nowrap}
 table{width:100%;border-collapse:collapse;font-size:15px;margin-top:12px;font-variant-numeric:tabular-nums}
 th,td{text-align:right;padding:8px 6px;border-bottom:1px solid var(--line)}
 th:first-child,td:first-child{text-align:left}
@@ -84,13 +85,13 @@ details summary::before{content:"＋ ";color:var(--acc)}
 details[open] summary::before{content:"－ "}
 details p{margin:8px 0 0;color:var(--soft);font-size:15px}
 body{padding-bottom:84px}
-:root{--s1:#1f7a4d;--s2:#c27c00}
-@media (prefers-color-scheme:dark){:root{--s1:#2e9a66;--s2:#b9852a}}
+:root{--s1:#1f7a4d;--s2:#c27c00;--s3:#2f6fd0;--s4:#a23bb8;--s5:#7a8580}
+@media (prefers-color-scheme:dark){:root{--s1:#2e9a66;--s2:#b9852a;--s3:#5b95e8;--s4:#c77ddc;--s5:#97a39c}}
 .bottom{position:fixed;left:0;right:0;bottom:0;z-index:9;background:var(--paper);border-top:1px solid var(--line);
 padding-bottom:env(safe-area-inset-bottom)}
-.bottom div{max-width:680px;margin:auto;display:grid;grid-template-columns:repeat(5,1fr)}
+.bottom div{max-width:680px;margin:auto;display:grid;grid-template-columns:repeat(6,1fr)}
 .bottom a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 0 10px;text-decoration:none;
-color:var(--soft);font-size:12px;font-weight:600}
+color:var(--soft);font-size:11px;font-weight:600;min-width:0;overflow:hidden}
 .bottom a span{font-size:21px;line-height:1}
 .bottom a.aktiv{color:var(--acc)}
 .knapp{display:inline-block;margin-top:12px;text-decoration:none;background:var(--acc);color:#fff;font-weight:700;
@@ -122,10 +123,18 @@ border-radius:999px;padding:9px 16px;font-size:15px}
 .figur svg .lbl{font-weight:700}
 .tag{font-size:12px;font-weight:700;padding:1px 7px;border-radius:999px;background:var(--chip);color:var(--soft);white-space:nowrap}
 .tag.up{color:var(--up)}.tag.down{color:var(--down)}
+.rb{display:grid;grid-template-columns:118px 1fr 64px;gap:8px;align-items:center;margin:9px 0;font-size:14.5px}
+.rb .zon{position:relative;height:18px;background:var(--track);border-radius:5px}
+.rb .zon:before{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;width:2px;background:var(--soft);opacity:.6}
+.rb .zon i{position:absolute;top:2px;bottom:2px;border-radius:3px}
+.rb .zon i.plus{background:var(--up);left:50%}
+.rb .zon i.minus{background:var(--down);right:50%}
+.rb .v{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.rb.bas{opacity:.8}
 </style></head><body>
 <div class="top"><div class="top-in"><span class="brand">ATG-boten</span><small>Uppdaterad 2026-11-16 21:37</small></div></div>
 <main><section>
-<div class="nu">🟢 <b>Boten vaktar just nu</b> och kollar oddsen varje minut. Idag: <b class="down">-305 kr</b>.</div>
+<div class="nu">😴 <b>Boten vilar.</b> Nästa vaktpass startar kl 09:40.</div>
 <p class="kicker" style="margin-top:18px">Låtsaskassan · startade med 1 000 kr</p>
 <h1>695 kr</h1>
 <p class="lede"><b class="down">-305 kr</b> sedan start</p>
@@ -133,14 +142,14 @@ border-radius:999px;padding:9px 16px;font-size:15px}
 <div class="stat"><b>30</b><span>Avgjorda spel</span></div>
 <div class="stat"><b>0 %</b><span>Andel vinster</span></div></div>
 <div class="chart"><svg viewBox="0 0 640 180" role="img" aria-label="Bankrullen över tid"><line x1="8" x2="632" y1="8.0" y2="8.0" stroke="var(--soft)" stroke-dasharray="4 5" opacity=".5"/><polyline points="8.0,8.0 28.8,13.4 49.6,18.8 70.4,24.1 91.2,29.5 112.0,34.9 132.8,40.3 153.6,45.6 174.4,51.0 195.2,56.4 216.0,61.8 236.8,67.1 257.6,72.5 278.4,77.9 299.2,83.3 320.0,88.7 340.8,94.0 361.6,99.4 382.4,107.5 403.2,112.9 424.0,118.2 444.8,123.6 465.6,129.0 486.4,134.4 507.2,139.7 528.0,145.1 548.8,150.5 569.6,155.9 590.4,161.2 611.2,166.6 632.0,172.0" fill="none" stroke="var(--down)" stroke-width="3" stroke-linejoin="round"/></svg><div class="legend">Streckad linje = startkassan 1 000 kr</div></div>
-<div class="warn"><b>Stoppregeln är aktiv.</b> Boten har förlorat mer än 300 kr senaste veckan och lägger inga nya spel just nu.</div><p class="plain" style="margin-top:14px">🎯 Botens favorit har vunnit <b>10 av 20</b> avgjorda lopp idag.</p>
+<div class="warn"><b>Stoppregeln är aktiv.</b> Boten har förlorat mer än 300 kr senaste veckan och lägger inga nya spel just nu.</div>
 <a class="knapp" href="utveckling.html">Se hela utvecklingen →</a>
 </section>
 <section><h2>Snart start</h2>
 <p class="note">Botens nästa beslut. Den spelar bara när ATG:s odds är minst 10 % bättre än chansen motiverar.</p>
 <div class="cards"><p class="empty">Inga lopp inom 45 minuter just nu.</p></div>
 <a class="knapp" href="lopp.html">Alla lopp idag med startlistor →</a></section>
-<section><h2>Dagens spel</h2><ul class="list"><li><span>10 kr på att <b>15 Adorable Lotus</b> kommer topp 3<br><span class="note">Plats (korspool) · lopp 3 · 19:02</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li><li><span>10 kr på att ordningen blir <b>2 → 4 → 7</b><br><span class="note">Trio · lopp 3 · 19:02</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li><li><span>10 kr på att ordningen blir <b>2 → 7 → 4</b><br><span class="note">Trio · lopp 3 · 19:02</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li><li><span>10 kr på att ordningen blir <b>6 → 5 → 1</b><br><span class="note">Trio · lopp 2 · 18:39</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li><li><span>10 kr på att ordningen blir <b>5 → 6 → 1</b><br><span class="note">Trio · lopp 2 · 18:39</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li><li><span>10 kr på att ordningen blir <b>5 → 3 → 6</b><br><span class="note">Trio · lopp 2 · 18:39</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li><li><span>10 kr på att ordningen blir <b>4 → 11 → 6</b><br><span class="note">Trio · lopp 1 · 18:17</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li><li><span>10 kr på att ordningen blir <b>4 → 11 → 2</b><br><span class="note">Trio · lopp 1 · 18:17</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li><li><span>10 kr på att ordningen blir <b>11 → 2 → 4</b><br><span class="note">Trio · lopp 1 · 18:17</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li><li><span>10 kr på att ordningen blir <b>8 → 6 → 7</b><br><span class="note">Trio · lopp 8 · 14:43</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li><li><span>10 kr på att ordningen blir <b>8 → 6 → 11</b><br><span class="note">Trio · lopp 8 · 14:43</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li><li><span>10 kr på att ordningen blir <b>8 → 11 → 6</b><br><span class="note">Trio · lopp 8 · 14:43</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li><li><span>15 kr på att <b>8 Mellby Nosey</b> vinner<br><span class="note">Vinnare · lopp 8 · 14:43</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−15 kr</span></li><li><span>10 kr på att ordningen blir <b>2 → 5 → 11</b><br><span class="note">Trio · lopp 7 · 14:24</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li><li><span>10 kr på att ordningen blir <b>2 → 11 → 13</b><br><span class="note">Trio · lopp 7 · 14:24</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li><li><span>10 kr på att ordningen blir <b>2 → 11 → 3</b><br><span class="note">Trio · lopp 7 · 14:24</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li><li><span>10 kr på att ordningen blir <b>3 → 8 → 7</b><br><span class="note">Trio · lopp 6 · 14:04</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li><li><span>10 kr på att ordningen blir <b>3 → 8 → 10</b><br><span class="note">Trio · lopp 6 · 14:04</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li><li><span>10 kr på att ordningen blir <b>3 → 8 → 1</b><br><span class="note">Trio · lopp 6 · 14:04</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li><li><span>10 kr på att ordningen blir <b>9 → 4 → 5</b><br><span class="note">Trio · lopp 5 · 13:44</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li><li><span>10 kr på att ordningen blir <b>7 → 6 → 11</b><br><span class="note">Trio · lopp 4 · 13:23</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li><li><span>10 kr på att ordningen blir <b>6 → 11 → 3</b><br><span class="note">Trio · lopp 4 · 13:23</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li><li><span>10 kr på att ordningen blir <b>6 → 11 → 7</b><br><span class="note">Trio · lopp 4 · 13:23</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li><li><span>10 kr på att ordningen blir <b>2 → 4 → 9</b><br><span class="note">Trio · lopp 3 · 13:01</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li><li><span>10 kr på att ordningen blir <b>2 → 4 → 1</b><br><span class="note">Trio · lopp 3 · 13:01</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li><li><span>10 kr på att ordningen blir <b>2 → 8 → 1</b><br><span class="note">Trio · lopp 3 · 13:01</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li><li><span>10 kr på att ordningen blir <b>7 → 11 → 10</b><br><span class="note">Trio · lopp 2 · 12:39</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li><li><span>10 kr på att ordningen blir <b>7 → 12 → 11</b><br><span class="note">Trio · lopp 2 · 12:39</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li><li><span>10 kr på att ordningen blir <b>5 → 1 → 6</b><br><span class="note">Trio · lopp 1 · 12:17</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li><li><span>10 kr på att ordningen blir <b>5 → 1 → 7</b><br><span class="note">Trio · lopp 1 · 12:17</span></span><span class="r"><span class="chip förlorad">förlorad</span><br>−10 kr</span></li></ul></section>
+<section><h2>Dagens spel</h2><p class="empty">Inga spel ännu idag.</p></section>
 <section><p class="note">Allt är låtsaspengar. Först efter ca 200 avgjorda spel går det att säga om boten är bra.</p></section></main>
-<nav class="bottom"><div><a href="index.html" class="aktiv"><span>🏠</span>Översikt</a><a href="lopp.html" class=""><span>🏇</span>Lopp</a><a href="vecka.html" class=""><span>📅</span>Veckan</a><a href="utveckling.html" class=""><span>📈</span>Utveckling</a><a href="hjalp.html" class=""><span>❓</span>Hjälp</a></div></nav>
+<nav class="bottom"><div><a href="index.html" class="aktiv"><span>🏠</span>Översikt</a><a href="lopp.html" class=""><span>🏇</span>Lopp</a><a href="vecka.html" class=""><span>📅</span>Veckan</a><a href="arena.html" class=""><span>🏁</span>Arenan</a><a href="utveckling.html" class=""><span>📈</span>Utveckling</a><a href="hjalp.html" class=""><span>❓</span>Hjälp</a></div></nav>
 </body></html>
