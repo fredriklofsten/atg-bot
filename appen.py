@@ -1,5 +1,5 @@
 """
-Bygger webbappen i docs/ av botens data: Översikt, Lopp, Veckan, Utveckling och Hjälp.
+Bygger webbappen i docs/ av botens data: Översikt, Lopp, Veckan, Arenan, Utveckling och Hjälp.
 Rena HTML-filer – GitHub Pages visar dem i mobilen.
 """
 import json
@@ -82,6 +82,7 @@ p{margin:0 0 12px;max-width:62ch}
 .legend{font-size:13px;color:var(--soft);display:flex;gap:14px;margin-top:6px}
 .legend i{display:inline-block;width:12px;height:8px;border-radius:3px;background:var(--acc);margin-right:5px}
 .legend u{display:inline-block;width:3px;height:12px;background:var(--gold);margin-right:5px;vertical-align:-2px}
+table.nw td,table.nw th{white-space:nowrap}
 table{width:100%;border-collapse:collapse;font-size:15px;margin-top:12px;font-variant-numeric:tabular-nums}
 th,td{text-align:right;padding:8px 6px;border-bottom:1px solid var(--line)}
 th:first-child,td:first-child{text-align:left}
@@ -105,13 +106,13 @@ details summary::before{content:"＋ ";color:var(--acc)}
 details[open] summary::before{content:"－ "}
 details p{margin:8px 0 0;color:var(--soft);font-size:15px}
 body{padding-bottom:84px}
-:root{--s1:#1f7a4d;--s2:#c27c00}
-@media (prefers-color-scheme:dark){:root{--s1:#2e9a66;--s2:#b9852a}}
+:root{--s1:#1f7a4d;--s2:#c27c00;--s3:#2f6fd0;--s4:#a23bb8;--s5:#7a8580}
+@media (prefers-color-scheme:dark){:root{--s1:#2e9a66;--s2:#b9852a;--s3:#5b95e8;--s4:#c77ddc;--s5:#97a39c}}
 .bottom{position:fixed;left:0;right:0;bottom:0;z-index:9;background:var(--paper);border-top:1px solid var(--line);
 padding-bottom:env(safe-area-inset-bottom)}
-.bottom div{max-width:680px;margin:auto;display:grid;grid-template-columns:repeat(5,1fr)}
+.bottom div{max-width:680px;margin:auto;display:grid;grid-template-columns:repeat(6,1fr)}
 .bottom a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 0 10px;text-decoration:none;
-color:var(--soft);font-size:12px;font-weight:600}
+color:var(--soft);font-size:11px;font-weight:600;min-width:0;overflow:hidden}
 .bottom a span{font-size:21px;line-height:1}
 .bottom a.aktiv{color:var(--acc)}
 .knapp{display:inline-block;margin-top:12px;text-decoration:none;background:var(--acc);color:#fff;font-weight:700;
@@ -143,6 +144,14 @@ border-radius:999px;padding:9px 16px;font-size:15px}
 .figur svg .lbl{font-weight:700}
 .tag{font-size:12px;font-weight:700;padding:1px 7px;border-radius:999px;background:var(--chip);color:var(--soft);white-space:nowrap}
 .tag.up{color:var(--up)}.tag.down{color:var(--down)}
+.rb{display:grid;grid-template-columns:118px 1fr 64px;gap:8px;align-items:center;margin:9px 0;font-size:14.5px}
+.rb .zon{position:relative;height:18px;background:var(--track);border-radius:5px}
+.rb .zon:before{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;width:2px;background:var(--soft);opacity:.6}
+.rb .zon i{position:absolute;top:2px;bottom:2px;border-radius:3px}
+.rb .zon i.plus{background:var(--up);left:50%}
+.rb .zon i.minus{background:var(--down);right:50%}
+.rb .v{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.rb.bas{opacity:.8}
 """
 
 
@@ -422,7 +431,7 @@ def kalibrering(punkter):
 
 # ---------------- Sidskal ----------------
 SIDOR = [("index.html", "🏠", "Översikt"), ("lopp.html", "🏇", "Lopp"), ("vecka.html", "📅", "Veckan"),
-         ("utveckling.html", "📈", "Utveckling"), ("hjalp.html", "❓", "Hjälp")]
+         ("arena.html", "🏁", "Arenan"), ("utveckling.html", "📈", "Utveckling"), ("hjalp.html", "❓", "Hjälp")]
 
 
 def skal(titel, aktiv, uppdaterad, innehall, uppdatera=True):
@@ -674,6 +683,116 @@ def sida_utveckling(df, data_dir, rapport, uppdaterad):
     return skal("Utveckling", "utveckling.html", uppdaterad, html + "</section>")
 
 
+# ---------------- Sida: Arenan (flera bottar mot varandra) ----------------
+def _pct_tecken(x):
+    return f"{x * 100:+.0f} %"
+
+
+def sida_arena(df, gissn, uppdaterad):
+    import arena
+    antal = len(arena.BOTTAR) - sum(1 for b in arena.BOTTAR if b["baslinje"])
+    html = (f'<section><h2>Arenan</h2><p class="lede">{antal} bottar lär sig och spelar på olika sätt, på exakt samma '
+            f'lopp. Alla satsar {arena.INSATS} kr med låtsaspengar strax före start. 📏 Favoriten och 🎲 Slumpen är '
+            f'måttstockar: en bot är bara intressant om den slår båda.</p>'
+            '<div class="warn"><b>Var försiktig med vinnarna.</b> När många bottar tävlar blir någon bäst av ren tur. '
+            f'Lita först på en bot som leder över minst 300 spel och flera veckor. Under {arena.MIN_SPEL_FOR_DOM} rättade '
+            'spel är siffrorna mest slump.</div>')
+    # 0. Vem gissar bäst? (alla lopp, inte bara de man spelat på)
+    if gissn:
+        skala_g = min(max([3.0] + [abs(g["fors"]) * 100 for g in gissn if g["nyckel"] != "fundamental"]), 10.0)
+        rg = ""
+        for g in gissn:
+            bredd = min(abs(g["fors"]) * 100 / skala_g, 1) * 50
+            spann = f' title="{g["lopp"]} lopp, slumpspann ±{2 * g["se"] * 100:.1f} %"' if g["se"] is not None else ""
+            rg += (f'<div class="rb{" bas" if g["nyckel"] == "fundamental" else ""}"><span>{escape(g["namn"])}</span>'
+                   f'<div class="zon"{spann}><i class="{"plus" if g["fors"] >= 0 else "minus"}" style="width:{bredd:.1f}%"></i></div>'
+                   f'<span class="v"><span class="{"up" if g["fors"] >= 0 else "down"}">{g["fors"] * 100:+.1f} %</span></span></div>')
+        n_lopp = max(g["lopp"] for g in gissn)
+        ses = [g["se"] for g in gissn if g["nyckel"] != "fundamental" and g["se"] is not None]
+        spann_text = f" Slumpens spelrum är just nu ungefär ±{2 * min(ses) * 100:.1f} procentenheter." if ses else ""
+        html += ('<div class="figur"><h3>Vem gissar vinnaren bäst?</h3><p class="note">Varje modell jämförs med oddsen på alla '
+                 f'{n_lopp} lopp som avgjorts. 0 % = lika bra som oddsen, plus = bättre. Det här är det säkraste måttet, '
+                 f'eftersom varje lopp räknas och inte bara de man satsat på.{spann_text}</p>' + rg + '</div>')
+    else:
+        html += ('<div class="figur"><h3>Vem gissar vinnaren bäst?</h3><p class="empty">Fylls i när de första loppen har '
+                 'avgjorts efter att bottarna gissat.</p></div>')
+    if df.empty or not len(df):
+        return skal("Arenan", "arena.html", uppdaterad, html + '<p class="empty">Inga spel ännu. Bottarna spelar '
+                    'första gången strax före nästa svenska travlopp.</p></section>')
+    tavla = arena.sammanfatta(df)
+
+    # 1. Rangordning: avkastning per bot
+    rangordnade = sorted(tavla, key=lambda t: (t["roi"] is None, -(t["roi"] or 0)))
+    skala = max([30.0] + [abs(t["roi"]) * 100 for t in tavla if t["roi"] is not None])
+    skala = min(skala, 100.0)
+    rader = ""
+    for t in rangordnade:
+        if t["roi"] is None:
+            zon, v = "", '<span class="note">–</span>'
+        else:
+            bredd = min(abs(t["roi"]) * 100 / skala, 1) * 50
+            zon = f'<i class="{"plus" if t["roi"] >= 0 else "minus"}" style="width:{bredd:.1f}%"></i>'
+            v = f'<span class="{"up" if t["roi"] >= 0 else "down"}">{_pct_tecken(t["roi"])}</span>'
+        rader += (f'<div class="rb{" bas" if t["baslinje"] else ""}"><span>{t["ikon"]} {escape(t["namn"])}</span>'
+                  f'<div class="zon" title="{t["rattade"]} rättade spel">{zon}</div><span class="v">{v}</span></div>')
+    html += ('<div class="figur"><h3>Avkastning per satsad krona</h3><p class="note">Grönt är plus, rött är minus. '
+             'ATG tar 15 % av varje krona, så en bot som spelar blint hamnar kring −15 %.</p>' + rader + '</div>')
+
+    # 2. Tabell
+    tab = ""
+    for t in rangordnade:
+        spann = f' <span class="note">±{2 * t["se"] * 100:.0f}</span>' if t["se"] is not None else ""
+        roi = _pct_tecken(t["roi"]) if t["roi"] is not None else "–"
+        traff = f'{t["traff"] * 100:.0f} %' if t["traff"] is not None else "–"
+        tab += (f'<tr><td>{t["ikon"]} {escape(t["namn"])}</td><td>{t["rattade"]}</td><td>{traff}</td>'
+                f'<td>{roi}{spann}</td><td>{t["netto"]:+.0f}</td></tr>')
+    html += ('<div class="figur"><h3>Ställning</h3><p class="note">Rättade spel, andel träffar och avkastning. '
+             '± är slumpens spelrum: ligger botens avkastning inom det är skillnaden mot noll inte bevisad.</p>'
+             f'<table class="nw"><tr><th>Bot</th><th>Spel</th><th>Träff</th><th>Avkastning</th><th>Netto kr</th></tr>{tab}</table></div>')
+
+    # 3. Kassa dag för dag för de bästa och måttstockarna
+    r = df[df.status.isin(["vunnen", "förlorad"])].copy()
+    if len(r):
+        r["dag"] = r.skapad.astype(str).str[:10]
+        r["netto"] = r.utbetalning - r.insats
+        dagar = sorted(r.dag.unique())
+        if len(dagar) >= 2:
+            bast = [t for t in rangordnade if not t["baslinje"] and t["roi"] is not None][:3]
+            valda = bast + [t for t in tavla if t["baslinje"] and t["roi"] is not None]
+            farger = {"favoriten": "--s5", "slumpen": "--s5"}
+            fargvar = iter(["--s1", "--s2", "--s3", "--s4"])
+            serier = []
+            for t in valda:
+                per = r[r.bot == t["nyckel"]].groupby("dag").netto.sum().reindex(dagar, fill_value=0).cumsum()
+                serier.append((t["namn"], [float(v) for v in per], farger.get(t["nyckel"]) or next(fargvar), t["baslinje"]))
+            etik = [d[5:].replace("-", "/") for d in dagar]
+            tabell = "".join(f'<tr><td>{n}</td><td>{v[-1]:+.0f}</td></tr>' for n, v, _, _ in serier)
+            html += figur("Vinst och förlust över tid",
+                          "Hur många låtsaskronor varje bot tjänat eller förlorat sammanlagt. De tre bästa botarna och måttstockarna (streckade).",
+                          linjediagram(etik, serier, fmt=lambda v: f"{v:+.0f}", nollinje=0),
+                          f'<table><tr><th>Bot</th><th>Netto kr</th></tr>{tabell}</table>')
+
+    # 4. Så tänker varje bot
+    tank = ""
+    for t in tavla:
+        text, klass = arena.dom(t, tavla)
+        tank += (f'<details><summary>{t["ikon"]} {escape(t["namn"])} <span class="chip {klass}">{escape(text)}</span></summary>'
+                 f'<p>{escape(t["forklaring"])}</p></details>')
+    html += f'<div class="figur"><h3>Så tänker varje bot</h3>{tank}</div>'
+
+    # 5. Senaste spelen
+    senaste = df.sort_values("skapad", kind="stable").tail(14).iloc[::-1]
+    rad = ""
+    for _, x in senaste.iterrows():
+        b = arena.NAMN.get(x.bot, {"ikon": "", "namn": x.bot})
+        chip = f'<span class="chip {x.status}">{escape(str(x.status))}</span>'
+        rad += (f'<li><span>{b["ikon"]} {escape(b["namn"])} · lopp {escape(str(x.lopp_id).split("_")[-1])}<br>'
+                f'<span class="note">{int(x.nr)} {escape(str(x.hast))} · odds {x.odds:.2f}</span></span>'
+                f'<span class="r">{chip}</span></li>')
+    html += f'<div class="figur"><h3>Senaste spelen</h3><ul class="list">{rad}</ul></div>'
+    return skal("Arenan", "arena.html", uppdaterad, html + "</section>")
+
+
 # ---------------- Sida: Hjälp ----------------
 def sida_hjalp(uppdaterad):
     fragor = [
@@ -705,6 +824,10 @@ def sida_hjalp(uppdaterad):
          "nära den streckade linjen är boten ärlig om sina chanser."),
         ("Varför spelar boten så sällan?", "De flesta lopp saknar värde. ATG tar 15–35 % av varje insats, så den som spelar "
          "på allt förlorar. Att avstå är en del av strategin."),
+        ("Vad är Arenan?", "Flera bottar spelar Vinnare på exakt samma lopp med 10 kr per spel och låtsaspengar. De skiljer sig "
+         "åt i hur de lär sig (hård eller lös broms, bara färsk data, snitt av alla) och hur de väljer spel. Favoriten och "
+         "Slumpen är måttstockar. Med många bottar blir någon bäst av ren tur, så lita bara på en som slår måttstockarna över "
+         "många spel och flera veckor."),
         ("Notiser i mobilen", f"Starka spel (+{config.NOTIS_OVERVARDE*100:.0f} % eller mer) och dagens resultat kommer som notis "
          "i appen ntfy."),
     ]
@@ -818,6 +941,8 @@ def bygg(data_dir="data", ut="docs/index.html"):
     status, program, vecka = las("idag.json"), las("program.json"), las("vecka.json")
     rf = Path("models/rapport.json")
     rapport = json.loads(rf.read_text(encoding="utf-8")) if rf.exists() else {}
+    import arena
+    arena_df, arena_gissn = arena.las(data_dir), arena.gissning(data_dir)
     nu = _nu()
     uppd = status.get("senast", nu.strftime("%Y-%m-%d %H:%M"))
     if program.get("datum") != nu.date().isoformat():
@@ -826,6 +951,7 @@ def bygg(data_dir="data", ut="docs/index.html"):
         "index.html": sida_oversikt(df, bank, status, program, nu, uppd),
         "lopp.html": sida_lopp(program, uppd),
         "vecka.html": sida_vecka(vecka, vecka.get("skapad", uppd)),
+        "arena.html": sida_arena(arena_df, arena_gissn, uppd),
         "utveckling.html": sida_utveckling(df, data_dir, rapport, uppd),
         "hjalp.html": sida_hjalp(uppd),
     }

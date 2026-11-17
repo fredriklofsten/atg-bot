@@ -1,0 +1,20 @@
+{
+ "stram": {
+  "antal_lopp": 5440,
+  "testlopp": 1088,
+  "loglik_marknad": -1.690814127242376,
+  "loglik_bot": -1.6876107361476091
+ },
+ "flexibel": {
+  "antal_lopp": 5440,
+  "testlopp": 1088,
+  "loglik_marknad": -1.690814127242376,
+  "loglik_bot": -1.6872955132640999
+ },
+ "farsk": {
+  "antal_lopp": 1490,
+  "testlopp": 298,
+  "loglik_marknad": -1.7784698185822483,
+  "loglik_bot": -1.78763028653615
+ }
+}

@@ -11,6 +11,8 @@ ATG-boten – styr allt härifrån.
   python bot.py automat               (GitHub) en runda: rätta, spela lopp som snart startar, bygg appen
   python bot.py vakt --timmar 4.5     (GitHub) vaktar i flera timmar: odds varje minut, spel 1–3 min före start
   python bot.py app                   bygg webbappen docs/index.html
+  python bot.py arena                 ställningen mellan arenans bottar
+  python bot.py arena-trana           träna arenans modellvarianter
 """
 import argparse
 import sys
@@ -227,7 +229,9 @@ def cmd_vakt(a):
     from datetime import timedelta
     import appen
     from features import las_loggar
+    import arena
     modell = Modell.ladda(MODELL_FIL)
+    arena_modeller = arena.ladda_modeller(huvud=modell)
     klient = ATGKlient(DATA)
     kassa = Papperskassa(DATA)
     slut = motor.nu() + timedelta(hours=a.timmar)
@@ -281,6 +285,10 @@ def cmd_vakt(a):
 
     def spara_allt(medd):
         kassa.ratta()
+        try:
+            arena.ratta(klient, DATA)
+        except Exception as e:
+            print(f"  (arenan kunde inte rättas: {e})")
         try:
             uppdatera_resultat()
         except Exception as e:
@@ -378,6 +386,12 @@ def cmd_vakt(a):
                         logga_prognos(prog)
                 except Exception as e:
                     print(f"  (prognos {lid}: {e})")
+                try:   # arenan: alla bottar bestämmer sig på samma odds som huvudboten (inget stoppläge – bara låtsasspel)
+                    n_arena = arena.spela(klient, arena_modeller, l, spel, ror, ai_alla, DATA)
+                    if n_arena:
+                        print(f"  {l['bana']} {l['nr']}: arenan lade {n_arena} spel")
+                except Exception as e:
+                    print(f"  (arenan {lid}: {e})")
                 if ror:   # spara rörelsen som den såg ut när beslutet togs (för träningen)
                     f = Path(DATA) / "rorelse.csv"
                     pd.DataFrame([{"lopp_id": k[0], "nr": k[1], "rorelse": v} for k, v in ror.items()]).to_csv(
@@ -454,6 +468,31 @@ def cmd_forska(a):
         forskare.kor()
 
 
+def cmd_arena_trana(a):
+    """Tränar arenans modellvarianter (försiktig, flexibel, färsk) på samma data som huvudmodellen."""
+    import arena
+    fil = Path(DATA) / "dataset.csv"
+    if not fil.exists():
+        sys.exit("Ingen data ännu. Kör först: python bot.py samla --dagar 60")
+    print("Tränar arenans modellvarianter:")
+    arena.trana_varianter(pd.read_csv(fil, low_memory=False))
+
+
+def cmd_arena(a):
+    """Visa ställningen i arenan i terminalen."""
+    import arena
+    df = arena.las(DATA)
+    if df.empty:
+        sys.exit("Inga arenaspel ännu. Vaktläget lägger dem strax före varje lopp.")
+    tavla = arena.sammanfatta(df)
+    print(f"{'Bot':16s} {'spel':>5s} {'rättade':>8s} {'ROI':>8s} {'±':>7s}  bedömning")
+    for t in tavla:
+        roi = f"{t['roi']*100:+.1f} %" if t["roi"] is not None else "–"
+        se = f"{2*t['se']*100:.0f} %" if t["se"] is not None else "–"
+        print(f"{t['ikon']} {t['namn']:13s} {t['spel']:5d} {t['rattade']:8d} {roi:>8s} {se:>7s}  {arena.dom(t, tavla)[0]}")
+    print("\n± = ungefärligt slumpspann (2 standardfel). Lita inte på en bot förrän den slår både Favoriten och Slumpen över många spel.")
+
+
 def cmd_app(a):
     import appen
     appen.bygg(DATA)
@@ -502,6 +541,8 @@ def main():
     s = sub.add_parser("automat"); s.set_defaults(f=cmd_automat)
     s = sub.add_parser("veckotraning"); s.add_argument("--tvinga", action="store_true"); s.set_defaults(f=cmd_veckotraning)
     s = sub.add_parser("app"); s.set_defaults(f=cmd_app)
+    s = sub.add_parser("arena"); s.set_defaults(f=cmd_arena)
+    s = sub.add_parser("arena-trana"); s.set_defaults(f=cmd_arena_trana)
     s = sub.add_parser("forska"); s.add_argument("steg", choices=["planera", "kor"]); s.set_defaults(f=cmd_forska)
     s = sub.add_parser("vakt"); s.add_argument("--timmar", type=float, default=4.5); s.set_defaults(f=cmd_vakt)
     a = p.parse_args()

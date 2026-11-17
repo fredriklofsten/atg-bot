@@ -41,6 +41,7 @@ jobs:
             python bot.py forska planera
             python bot.py forska kor
             python bot.py trana
+            python bot.py arena-trana
           fi
       - name: Vakta loppen
         run: python bot.py vakt --timmar 4.5
