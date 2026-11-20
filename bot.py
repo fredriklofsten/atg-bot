@@ -401,7 +401,7 @@ def cmd_vakt(a):
                                               f"({s['overvarde']*100:+.0f} %)" for s in starka))
                 t_bygg = 0   # bygg appen direkt efter spel
         for g, m in vspel:
-            spela = m <= 5 and g["id"] not in status["spelat_system"]
+            spela = m <= config.SPELA_FORE_MIN and g["id"] not in status["spelat_system"]
             if m > 180 or (not spela and t0 - t_analys.get(g["id"], 0) < 900):
                 continue
             an = motor.analysera_system(klient, modell, g, min(config.SYSTEM_BUDGET, bank * config.MAX_SYSTEM_ANDEL), rorelse_alla, ai_alla)
