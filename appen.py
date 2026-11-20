@@ -905,9 +905,6 @@ def sida_oversikt(df, bank, status, program, nu, uppdaterad):
         favtext = (f'<p class="plain" style="margin-top:14px">🎯 Botens favorit har vunnit <b>{ratt} av {len(klara)}</b> '
                    f'avgjorda lopp idag.</p>')
 
-    stopp = ('<div class="warn"><b>Stoppregeln är aktiv.</b> Boten har förlorat mer än '
-             f'{kr(config.MAX_FORLUST_PER_VECKA)} senaste veckan och lägger inga nya spel just nu.</div>'
-             if status.get("stopp") else "")
     html = f"""<section>
 <div class="nu">{nu_text}</div>
 <p class="kicker" style="margin-top:18px">Låtsaskassan · startade med {kr(config.BANKRULLE_START)}</p>
@@ -917,7 +914,7 @@ def sida_oversikt(df, bank, status, program, nu, uppdaterad):
 <div class="stat"><b>{len(rattade)}</b><span>Avgjorda spel</span></div>
 <div class="stat"><b>{traff:.0f} %</b><span>Andel vinster</span></div></div>
 {_kurva(df) if not df.empty else ''}
-{stopp}{favtext}
+{favtext}
 <a class="knapp" href="utveckling.html">Se hela utvecklingen →</a>
 </section>
 <section><h2>Snart start</h2>

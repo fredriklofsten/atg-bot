@@ -103,9 +103,6 @@ def cmd_tips(a):
     kassa = Papperskassa(DATA)
     bank = kassa.bankrulle()
     ut = [f"# ATG-botens förslag {datum}", f"Bankrulle (låtsas): {bank:.0f} kr", ""]
-    stopp = kassa.forlust_senaste_veckan() > config.MAX_FORLUST_PER_VECKA
-    if stopp:
-        ut.append(f"STOPP: förlust över {config.MAX_FORLUST_PER_VECKA} kr senaste veckan. Inga nya spel sparas.\n")
 
     if a.typ in ("alla", "system"):
         for g in spel_i_kalender(kal, config.SYSTEMSPEL):
@@ -115,7 +112,7 @@ def cmd_tips(a):
             if not an:
                 continue
             _visa_system(an, ut)
-            if a.spara and not stopp:
+            if a.spara:
                 bank = motor.spara_system(kassa, an, bank)
 
     if a.typ in ("alla", "lopp"):
@@ -137,7 +134,7 @@ def cmd_tips(a):
             for s in an["spel"]:
                 ut.append(f"- **{s['typ']} {s['val']} {s['hast']}**: chans {pct(s['chans'])}, odds {s['odds']:.2f} "
                           f"(rättvist {1/s['chans']:.2f}), övervärde {s['overvarde']*100:+.0f} %, insats {s['insats']} kr")
-            if a.spara and not stopp:
+            if a.spara:
                 bank = motor.spara_lopp_spel(kassa, an, bank)
         if fa_pengar:
             ut.append(f"\nFör lite pengar i poolen än (under {config.MIN_OMSATTNING} kr), kör igen närmare start: "
@@ -171,7 +168,6 @@ def cmd_automat(a):
         status = {"datum": idag, "lopp": {}, "system": {}}
     kal = klient.kalender(idag)
     bank = kassa.bankrulle()
-    stopp = kassa.forlust_senaste_veckan() > config.MAX_FORLUST_PER_VECKA
     for l in lopp_i_kalender(kal):
         m = motor.minuter_kvar(l["starttid"])
         if l["status"] == "results" or m is None or not (0 < m <= 45):
@@ -181,7 +177,7 @@ def cmd_automat(a):
             continue
         an["analyserad"] = motor.nu().strftime("%H:%M")
         status["lopp"][l["lopp_id"]] = an
-        if not stopp and m <= config.SPELFONSTER_MIN:
+        if m <= config.SPELFONSTER_MIN:
             bank = motor.spara_lopp_spel(kassa, an, bank)
             print(f"  {l['bana']} {l['nr']}: {len(an['spel'])} värdespel")
     for g in spel_i_kalender(kal, config.SYSTEMSPEL):
@@ -195,11 +191,10 @@ def cmd_automat(a):
             continue
         an["analyserad"] = motor.nu().strftime("%H:%M")
         status["system"][g["id"]] = an
-        if not stopp and m <= 20:
+        if m <= 20:
             bank = motor.spara_system(kassa, an, bank)
     kassa.spara()
     status["senast"] = motor.nu().strftime("%Y-%m-%d %H:%M")
-    status["stopp"] = stopp
     statusfil.write_text(json.dumps(status, ensure_ascii=False), encoding="utf-8")
     appen.bygg(DATA)
     print("Appen uppdaterad: docs/index.html")
@@ -295,7 +290,6 @@ def cmd_vakt(a):
             print(f"  (resultat kunde inte uppdateras: {e})")
         progfil.write_text(json.dumps(program, ensure_ascii=False), encoding="utf-8")
         status["senast"] = motor.nu().strftime("%Y-%m-%d %H:%M")
-        status["stopp"] = kassa.forlust_senaste_veckan() > config.MAX_FORLUST_PER_VECKA
         statusfil.write_text(json.dumps(status, ensure_ascii=False), encoding="utf-8")
         loggfil.write_text(json.dumps(logg), encoding="utf-8")
         appen.bygg(DATA)
@@ -315,7 +309,6 @@ def cmd_vakt(a):
             print("Inga fler lopp idag.")
             break
         bank = kassa.bankrulle()
-        stopp = kassa.forlust_senaste_veckan() > config.MAX_FORLUST_PER_VECKA
         rorelse_alla, ai_alla = las_loggar(DATA)
         # Dagens program (alla lopp, för appen) var 20:e minut
         if t0 - t_prog > 1200:
@@ -386,7 +379,7 @@ def cmd_vakt(a):
                         logga_prognos(prog)
                 except Exception as e:
                     print(f"  (prognos {lid}: {e})")
-                try:   # arenan: alla bottar bestämmer sig på samma odds som huvudboten (inget stoppläge – bara låtsasspel)
+                try:   # arenan: alla bottar bestämmer sig på samma odds som huvudboten (bara låtsasspel)
                     n_arena = arena.spela(klient, arena_modeller, l, spel, ror, ai_alla, DATA)
                     if n_arena:
                         print(f"  {l['bana']} {l['nr']}: arenan lade {n_arena} spel")
@@ -396,7 +389,7 @@ def cmd_vakt(a):
                     f = Path(DATA) / "rorelse.csv"
                     pd.DataFrame([{"lopp_id": k[0], "nr": k[1], "rorelse": v} for k, v in ror.items()]).to_csv(
                         f, mode="a", header=not f.exists(), index=False)
-                if not stopp and not an["for_lite_pengar"]:
+                if not an["for_lite_pengar"]:
                     lagda = []
                     bank = motor.spara_lopp_spel(kassa, an, bank, lagda)
                     kassa.spara()
@@ -420,9 +413,8 @@ def cmd_vakt(a):
             if spela:
                 status["spelat_system"].append(g["id"])
                 fore = len(kassa.df)
-                if not stopp:
-                    bank = motor.spara_system(kassa, an, bank)
-                    kassa.spara()
+                bank = motor.spara_system(kassa, an, bank)
+                kassa.spara()
                 if len(kassa.df) > fore:
                     sy = an["system"]["Balanserad"]
                     motor.notis(f"{g['typ']} {g['bana']} – system lagt",

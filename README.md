@@ -75,7 +75,7 @@ python bot.py utforska V85_2026-11-14_14_5 # titta i rådata
 python bot.py samla --dagar 365            # mer historik = bättre modell (tar ~1–2 h första gången)
 ```
 
-Allt annat ställer du in i `config.py`: bankrulle, hur säker boten ska vara (`MIN_OVERVARDE`), Kelly-andel, stoppgräns per vecka, länder och mer.
+Allt annat ställer du in i `config.py`: bankrulle, hur säker boten ska vara (`MIN_OVERVARDE`), Kelly-andel, länder och mer.
 
 ## Filerna
 

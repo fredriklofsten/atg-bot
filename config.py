@@ -9,7 +9,6 @@ KELLY_ANDEL = 0.25              # hur stor del av Kelly-insatsen vi vågar (0.25
 MAX_INSATS_ANDEL = 0.03         # aldrig mer än 3 % av bankrullen på ett enskilt spel
 MIN_INSATS = 10                 # ATG:s minsta insats på Vinnare/Plats (KONTROLLERA)
 MAX_SYSTEM_ANDEL = 0.05         # max 5 % av bankrullen per V-system i pappersspelet
-MAX_FORLUST_PER_VECKA = 300     # stoppregel: boten slutar föreslå spel om du förlorat mer än så på 7 dagar
 
 # ---- När är ett spel "värt" det? ----
 MIN_OVERVARDE = 0.10            # spela bara om förväntat värde är minst +10 % (p * odds - 1 >= 0.10)
