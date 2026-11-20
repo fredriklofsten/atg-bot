@@ -20,7 +20,7 @@ SPELFONSTER_MIN = 14            # pappersspela lopp som startar inom så många 
 SYSTEM_BUDGET = 200             # kr per V-system i automatläget
 SPELA_FORE_MIN = 3              # vaktläget lägger ALLA spel (lopp och V-system) när det är så här många minuter kvar – sista oddsen = bäst underlag för lärandet
 ODDSLOGG_FRAN_MIN = 30          # börja logga odds varje minut så här långt före start
-SYSTEM_BARA_JACKPOTT = True     # pappersspela bara V-system på jackpottomgångar (annars är avdraget för stort)
+SYSTEM_BARA_JACKPOTT = False    # False = pappersspela V-system på alla omgångar (mer data att lära sig av); True = bara jackpott
 KORSPOOL_OVERVARDE = 0.15       # korspool-spel kräver minst +15 % enligt marknadens egna vinnarodds
 NOTIS_OVERVARDE = 0.30          # skicka mobilnotis när ett spel har minst +30 % övervärde
 AI_MODELL = "claude-haiku-5-5"  # billig och snabb modell för att läsa ATG:s kommentarer
