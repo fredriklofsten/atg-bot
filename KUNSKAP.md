@@ -88,7 +88,19 @@ Den här filen är botens "lärobok". Allt nedan finns också inbyggt i koden, f
 - **Jackpott:** jackpotpengar läggs ovanpå potten. Kravet på värdeindex delas därför med (1 + jackpott / pottens storlek efter avdrag).
 - **AI-forskaren:** varje måndag testas en hypotes, till exempel "formdatan tillför inget". Planen och regeln laddas upp innan testet körs. Ändringen förs bara in om den förbättrar i minst 4 av 5 månader och i snitt med minst 0,002.
 
-## 7. Fallgropar boten känner till
+## 7. Hur boten lär sig av förlorade spel
+
+Varje avgjort spel, från huvudboten och från arenan, analyseras i `analys.py` och sparas i `data/spelanalys.csv`:
+
+- **Var hästen kom och vem som vann.** Förlusten får en orsak: *nära* (precis utanför), *mitt i fältet*, *långt efter*, *galopp eller diskad*, *en skräll vann* eller *marknaden trodde mindre efter spelet*. Många "nära" betyder att boten var på rätt spår. Många "långt efter" betyder att den trodde fel.
+- **Slutoddset (CLV):** jämför oddset när boten spelade med oddset vid start. Sjunker det har fler pengar kommit på samma häst, alltså höll marknaden med i efterhand. Det är det snabbaste måttet på om en bot är smart. Det syns efter några hundra spel, medan vinst och förlust kräver tusentals. Favoriter sjunker ofta lite ändå, så boten jämförs med 📏 Favoriten.
+- **Lärdomar:** spelen delas in i grupper (speltyp, oddsnivå, hur mycket boten trodde mer än marknaden, oddsrörelse, startmetod, fältstorlek). I varje grupp jämförs antalet träffar med hur många boten själv räknade med. En skillnad räknas bara som lärdom om den är för stor för att vara slump (|z| ≥ 2,5, minst 30 spel). Gränsen är hög eftersom många grupper testas samtidigt och någon alltid ser konstig ut av ren tur.
+- **Försiktighet:** träffar huvudboten mer sällan än den tror i en speltyp (minst 20 spel) sänks dess chans där: faktor = (träffar + 3) / (förväntade träffar + 3), aldrig under 0,5 och aldrig över 1. De tre "låtsasträffarna" gör att några få förluster bara ändrar lite. Boten blir alltså bara försiktigare, aldrig djärvare, av sina förluster.
+- **Max ett Trio- och ett Tvillingspel per lopp** (`MAX_KOMBO_PER_LOPP`). Flera kombinationer i samma lopp hänger ihop: de ger mer slump men nästan ingen ny kunskap.
+
+Kör `python bot.py lardomar` för att se analysen på datorn. I appen finns den under Utveckling.
+
+## 8. Fallgropar boten känner till
 
 - **Slumpen dominerar på kort sikt.** Du behöver hundratals spel innan resultatet säger något.
 - **Favorit–långskott-bias:** långskott är ofta överspelade av allmänheten och favoriter något underspelade.
@@ -96,7 +108,7 @@ Den här filen är botens "lärobok". Allt nedan finns också inbyggt i koden, f
 - **Strykningar** ändrar allt. Kör `tips` igen nära start.
 - **Överanpassning:** för många egenskaper på för lite data ger en modell som ser bra ut på gamla lopp men misslyckas på nya. Därför används krympning (`L2_STRAFF`) och tidsuppdelad testning.
 
-## 8. Spela ansvarsfullt
+## 9. Spela ansvarsfullt
 
 - Boten spelar bara med låtsaspengar. Den kan inte lägga riktiga spel, och ATG har inget öppet API för att spela.
 - Testa minst 2–3 månader på papper innan du ens överväger riktiga pengar, och bara med pengar du har råd att förlora.

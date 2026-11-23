@@ -288,6 +288,13 @@ def cmd_vakt(a):
             uppdatera_resultat()
         except Exception as e:
             print(f"  (resultat kunde inte uppdateras: {e})")
+        try:   # förlustanalys och lärdomar (bara nya avgjorda spel hämtas)
+            import analys
+            n_ny, _ = analys.kor(klient, DATA)
+            if n_ny:
+                print(f"  förlustanalysen gick igenom {n_ny} nya spel")
+        except Exception as e:
+            print(f"  (förlustanalysen misslyckades: {e})")
         progfil.write_text(json.dumps(program, ensure_ascii=False), encoding="utf-8")
         status["senast"] = motor.nu().strftime("%Y-%m-%d %H:%M")
         statusfil.write_text(json.dumps(status, ensure_ascii=False), encoding="utf-8")
@@ -491,6 +498,30 @@ def cmd_app(a):
     print("Byggde docs/index.html")
 
 
+def cmd_lardomar(a):
+    """Analysera avgjorda spel (särskilt förlusterna) och visa vad boten lärt sig."""
+    import analys
+    kassa = Papperskassa(DATA)
+    kassa.ratta()
+    n, u = analys.kor(ATGKlient(DATA), DATA)
+    print(f"Analyserade {n} nya spel. Totalt {u['spel']} spel i analysen, {u['testade_grupper']} grupper testade.")
+    if u["lardomar"]:
+        print("\nLärdomar (säkra, |z| >= 2,5):")
+        for l in u["lardomar"]:
+            print("  •", l["text"])
+    else:
+        print("\nInga säkra lärdomar ännu – skillnaderna är fortfarande inom slumpens ramar.")
+    if u["forsiktighet"]:
+        print("\nFörsiktighet i spelen just nu:")
+        for t, v in u["forsiktighet"].items():
+            print(f"  {t:12s} chansen × {v['faktor']:.2f}  ({v['traffar']} träffar, väntade {v['forvantat']:.1f})")
+    for kalla, o in u["orsaker"].items():
+        if kalla == "huvud":
+            print("\nVarför huvudboten förlorade:")
+            for orsak, n in o.items():
+                print(f"  {orsak:40s} {n}")
+
+
 def cmd_ratta(a):
     k = Papperskassa(DATA)
     n = k.ratta()
@@ -528,6 +559,7 @@ def main():
     s.add_argument("--visa-alla", action="store_true", help="visa även troligaste trio/tvilling")
     s.set_defaults(f=cmd_tips)
     s = sub.add_parser("ratta"); s.set_defaults(f=cmd_ratta)
+    s = sub.add_parser("lardomar"); s.set_defaults(f=cmd_lardomar)
     s = sub.add_parser("saldo"); s.set_defaults(f=cmd_saldo)
     s = sub.add_parser("utforska"); s.add_argument("spel_id"); s.set_defaults(f=cmd_utforska)
     s = sub.add_parser("automat"); s.set_defaults(f=cmd_automat)

@@ -612,6 +612,11 @@ def sida_utveckling(df, data_dir, rapport, uppdaterad):
     else:
         html += '<div class="figur"><h3>Kassan dag för dag</h3><p class="empty">Graferna över kassan dyker upp när boten har avgjorda spel.</p></div>'
 
+    # 1b. Lärdomar från förlorade spel
+    try:
+        html += _lardomar_html(data_dir)
+    except Exception as e:      # appen ska alltid byggas, även om analysen krånglar
+        print(f"  (lärdomar i appen: {e})")
     # 2. Bot mot oddsen (från prognosloggen)
     pf, rf = Path(data_dir) / "prognoser.csv", Path(data_dir) / "resultat.csv"
     if pf.exists() and rf.exists():
@@ -681,6 +686,79 @@ def sida_utveckling(df, data_dir, rapport, uppdaterad):
     html += ('<div class="figur"><h3>AI-forskaren</h3><p class="note">Varje måndag testas en idé. Reglerna laddas upp innan '
              f'testet körs, så slumpen inte kan lura boten.</p>{f"<ul class=list>{forsk}</ul>" if forsk else "<p class=empty>Första testet körs på måndag förmiddag.</p>"}</div>')
     return skal("Utveckling", "utveckling.html", uppdaterad, html + "</section>")
+
+
+# ---------------- Lärdomar från förlorade spel ----------------
+def _lardomar_html(data_dir):
+    import analys
+    import arena
+    u = analys.las_lardomar(data_dir)
+    if not u or not u.get("spel"):
+        return ('<div class="figur"><h3>Lärdomar från förlorade spel</h3><p class="empty">Fylls i när de första '
+                'spelen har avgjorts och analyserats.</p></div>')
+    def namn(kalla):
+        if kalla == "huvud":
+            return "Huvudboten"
+        b = arena.NAMN.get(kalla.split(":", 1)[1])
+        return f'{b["ikon"]} {b["namn"]}' if b else kalla
+    html = ('<div class="figur"><h3>Lärdomar från förlorade spel</h3><p class="note">Varje avgjort spel analyseras: '
+            'var hästen kom, vem som vann och om oddset rörde sig efter spelet. Boten jämför sedan sina träffar med '
+            'hur många den själv räknade med, i många olika grupper. Bara skillnader som är för stora för att vara '
+            f'slump räknas som lärdomar. {u["spel"]} spel analyserade, {u["testade_grupper"]} grupper testade.</p>')
+    if u["lardomar"]:
+        html += "<ul class=list>" + "".join(
+            f'<li><span>{escape(l["text"])}</span><span class="r"><span class="chip {"förlorad" if l["z"] < 0 else "vunnen"}">'
+            f'z {l["z"]:+.1f}</span></span></li>' for l in u["lardomar"][:8]) + "</ul>"
+    else:
+        html += ('<p><b>Inga säkra lärdomar ännu.</b> Alla skillnader ryms fortfarande inom slumpen. Det är bra: '
+                 'boten lär sig inte in brus.</p>')
+    fs = u.get("forsiktighet") or {}
+    if fs:
+        html += "<p class=kicker style='margin-top:14px'>Försiktighet i spelen just nu</p><ul class=list>" + "".join(
+            f'<li><span>{escape(TYPNAMN.get(t, t))}<br><span class="note">{v["traffar"]} träffar på {v["spel"]} spel, '
+            f'väntade {v["forvantat"]:.1f}</span></span><span class="r">chansen × {v["faktor"]:.2f}</span></li>'
+            for t, v in fs.items()) + "</ul>"
+    html += ('<p class="note" style="margin-top:10px">Träffar boten mer sällan än den tror i en speltyp sänks dess '
+             'chans där automatiskt (aldrig under hälften). Det går bara åt det försiktiga hållet.</p></div>')
+    # Varför förlorade huvudboten?
+    o = (u.get("orsaker") or {}).get("huvud") or {}
+    if o:
+        tot = sum(o.values())
+        tab = "".join(f'<tr><td>{escape(k)}</td><td>{v}</td><td>{v / tot * 100:.0f} %</td></tr>' for k, v in o.items())
+        html += figur("Varför förlorade huvudboten?",
+                      "Många ”nära” betyder att boten var på rätt spår. Många ”långt efter” betyder att den trodde fel.",
+                      stapeldiagram([k.split(" (")[0] for k in o], [v / tot * 100 for v in o.values()],
+                                    fmt=lambda v: f"{v:.0f} %"),
+                      f'<table><tr><th>Orsak</th><th>Spel</th><th>Andel</th></tr>{tab}</table>')
+    # Slutoddsmåttet (CLV)
+    clv = u.get("clv") or {}
+    if clv:
+        bas = (clv.get("arena:favoriten") or {}).get("snitt")
+        rader = sorted(clv.items(), key=lambda t: -t[1]["snitt"])
+        tab = ""
+        for k, v in rader:
+            mot = "" if bas is None or k == "arena:favoriten" else f"{(math.exp(v['snitt'] - bas) - 1) * 100:+.1f} %"
+            tab += (f'<tr><td>{escape(namn(k))}</td><td>{v["spel"]}</td>'
+                    f'<td>{(math.exp(v["snitt"]) - 1) * 100:+.1f} %</td><td>{mot}</td></tr>')
+        html += ('<div class="figur"><h3>Slog boten slutoddset?</h3><p class="note">Det snabbaste måttet på om en bot '
+                 'är smart. Sjunker oddset efter att boten spelat (plus här) kom fler pengar på samma häst, alltså höll '
+                 'marknaden med i efterhand. Det syns efter några veckor, långt före vinst och förlust. Favoritens '
+                 'odds sjunker ofta lite ändå, så jämför med 📏 Favoriten.</p>'
+                 f'<table><tr><th>Bot</th><th>Spel</th><th>Oddset sjönk</th><th>Mot Favoriten</th></tr>{tab}</table></div>')
+    # Senaste förlusterna
+    sen = u.get("senaste_forluster") or []
+    if sen:
+        rad = ""
+        for f in sen:
+            info = escape(f["skapad"][:16].replace("T", " "))
+            if f.get("placering"):
+                info += f" · kom {f['placering']}:a"
+            if f.get("vinnare"):
+                info += f" · nr {f['vinnare']} vann"
+            rad += (f'<li><span>{_klartext(f["typ"], f["val"])}<br><span class="note">{info}</span></span>'
+                    f'<span class="r"><span class="chip">{escape(f["orsak"])}</span></span></li>')
+        html += f'<div class="figur"><h3>Senaste förlorade spelen</h3><ul class="list">{rad}</ul></div>'
+    return html
 
 
 # ---------------- Sida: Arenan (flera bottar mot varandra) ----------------

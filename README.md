@@ -22,6 +22,7 @@ GitHub kör boten i tre vaktpass per dag: 09:40, 14:10 och 18:40, 4,5 timmar var
 - **Korspool:** spel där ATG:s potter är oense med varandra, oberoende av botens egen spådom.
 - **V-spel bara på jackpott:** jackpotten sänker kravet på värdeindex. Utan jackpott visas systemen bara.
 - **Notiser:** starka spel (+30 %) och dagens resultat skickas till mobilen via appen ntfy. Kräver hemligheten `NTFY_AMNE`.
+- **Lärdomar från förlorade spel:** varje avgjort spel analyseras (var hästen kom, varför den förlorade, om oddset sjönk efter spelet). Bara statistiskt säkra mönster lärs in, och de kan bara göra boten försiktigare. Syns under Utveckling i appen.
 - **Måndagar:** boten hämtar förra veckans lopp och tränar om. AI-forskaren skriver ner veckans hypotes och regler, laddar upp dem och testar sedan. Ändringar förs bara in om de vinner enligt de förregistrerade reglerna.
 
 Appen: https://fredriklofsten.github.io/atg-bot/ – välj "Lägg till på hemskärmen" i mobilen.
@@ -60,6 +61,7 @@ Får du ett "issue" på GitHub om att boten kraschade: skicka länken till Claud
 | Strax före start | `python bot.py tips --typ lopp` | Färskare odds = bättre förslag |
 | Efter loppen | `python bot.py ratta` | Rättar och visar hur det går |
 | När som helst | `python bot.py saldo` | Bankrulle och ROI per speltyp |
+| När som helst | `python bot.py lardomar` | Varför spelen förlorades och vad boten lärt sig av det |
 | En gång i veckan | `python bot.py samla --dagar 10` och sedan `python bot.py trana` | Boten lär sig av de senaste loppen |
 
 Förslagen sparas också i `rapporter/tips_DATUM.md`.
@@ -87,6 +89,7 @@ Allt annat ställer du in i `config.py`: bankrulle, hur säker boten ska vara (`
 | `model.py` | Modellen som lär sig och testar sig själv |
 | `strategy.py` | Övervärde, Kelly-insats, Harville, V-systembygge |
 | `papper.py` | Låtsaskassan och rättning |
+| `analys.py` | Förlustanalys, lärdomar och försiktighet |
 | `config.py` | Alla inställningar |
 | `KUNSKAP.md` | Botens lärobok om trav och spel |
 

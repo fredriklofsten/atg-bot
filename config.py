@@ -22,6 +22,8 @@ SPELA_FORE_MIN = 3              # vaktläget lägger ALLA spel (lopp och V-syste
 ODDSLOGG_FRAN_MIN = 30          # börja logga odds varje minut så här långt före start
 SYSTEM_BARA_JACKPOTT = False    # False = pappersspela V-system på alla omgångar (mer data att lära sig av); True = bara jackpott
 KORSPOOL_OVERVARDE = 0.15       # korspool-spel kräver minst +15 % enligt marknadens egna vinnarodds
+MAX_KOMBO_PER_LOPP = 1          # högst så många Trio- (och Tvilling-) spel per lopp. Flera kombinationer i samma lopp
+                                # hänger ihop: de ger mer slump men nästan ingen ny kunskap
 NOTIS_OVERVARDE = 0.30          # skicka mobilnotis när ett spel har minst +30 % övervärde
 AI_MODELL = "claude-haiku-5-5"  # billig och snabb modell för att läsa ATG:s kommentarer
 

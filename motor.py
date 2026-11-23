@@ -96,7 +96,7 @@ def analysera_system(klient, modell, g, budget, rorelse=None, ai=None):
             "avdelningar": visning, "system": system}
 
 
-def analysera_lopp(klient, modell, l, bank, rorelse=None, ai=None, spel=None):
+def analysera_lopp(klient, modell, l, bank, rorelse=None, ai=None, spel=None, data_dir="data"):
     """Ett lopp -> dict med favoriter och värdespel (Vinnare, Plats, Trio, Tvilling + korspool)."""
     spel = spel or klient.spel(f"vinnare_{l['lopp_id']}", farsk=True)
     df = df_for_spel(spel, "vinnare", klient, rorelse, ai)
@@ -128,12 +128,12 @@ def analysera_lopp(klient, modell, l, bank, rorelse=None, ai=None, spel=None):
     for typ in ("trio", "tvilling"):
         ts = klient.spel(f"{typ}_{l['lopp_id']}", farsk=True)
         pool = (ts or {}).get("pools", {}).get(typ)
-        for v in strategy.kombinationer(lopp, p, pool, typ)["varde"][:3]:
+        for v in strategy.kombinationer(lopp, p, pool, typ)["varde"][:config.MAX_KOMBO_PER_LOPP]:
             ut["spel"].append({"typ": typ.capitalize(), "val": "-".join(map(str, v["kombo"])), "hast": "",
                                "chans": float(v["chans"]), "odds": float(v["odds"]),
                                "overvarde": float(v["overvarde"]), "insats": 10, "spel_id": f"{typ}_{l['lopp_id']}"})
         # Korspool: bara marknadens egna vinnarodds jämförda med den här potten (ingen egen spådom)
-        for v in strategy.kombinationer(lopp, pm, pool, typ)["varde"][:2]:
+        for v in strategy.kombinationer(lopp, pm, pool, typ)["varde"][:config.MAX_KOMBO_PER_LOPP]:
             if v["overvarde"] >= config.KORSPOOL_OVERVARDE:
                 ut["spel"].append({"typ": typ.capitalize() + "-pool", "val": "-".join(map(str, v["kombo"])),
                                    "hast": "", "chans": float(v["chans"]), "odds": float(v["odds"]),
@@ -147,6 +147,9 @@ def analysera_lopp(klient, modell, l, bank, rorelse=None, ai=None, spel=None):
     # Ta bort korspool-spel som redan finns som vanligt spel på samma val
     vanliga = {(s["typ"], s["val"]) for s in ut["spel"] if "-pool" not in s["typ"]}
     ut["spel"] = [s for s in ut["spel"] if "-pool" not in s["typ"] or (s["typ"][:-5], s["val"]) not in vanliga]
+    # Lärdomar från förlorade spel: sänk chansen i speltyper där boten visat sig överskatta sig
+    import analys
+    ut["spel"] = analys.justera_spel(ut["spel"], analys.forsiktighet(data_dir), bank)
     return ut
 
 
