@@ -6,5 +6,13 @@
   "loglik_marknad": -1.690814127242376,
   "loglik_bot": -1.6873437821820947,
   "loglik_fundamental": -1.9374310799992078
+ },
+ {
+  "datum": "2026-11-23",
+  "antal_lopp": 5596,
+  "testlopp": 1120,
+  "loglik_marknad": -1.7089445000347991,
+  "loglik_bot": -1.7060871957610253,
+  "loglik_fundamental": -1.931338341813005
  }
 ]
