@@ -29,5 +29,36 @@
   "snitt_forbattring": 3.330839619075654e-05,
   "battre_manader": 3,
   "infors": false
+ },
+ {
+  "id": "l2_starkare",
+  "datum": "2026-11-23",
+  "planerad": "2026-11-23",
+  "text": "Mer återhållsam modell (L2 3,0) gissar bättre",
+  "regel": "Införs bara om snittet förbättras med minst 0.002 OCH idén är bättre i minst 4 av de 5 senaste månaderna.",
+  "manader": [
+   "2026-07",
+   "2026-08",
+   "2026-09",
+   "2026-10",
+   "2026-11"
+  ],
+  "fore": [
+   -1.7211471139250507,
+   -1.675621698420881,
+   -1.6567325621704243,
+   -1.6697878543213465,
+   -1.7639231506594326
+  ],
+  "efter": [
+   -1.721423812736935,
+   -1.675683027374925,
+   -1.65669133231501,
+   -1.6698486443186562,
+   -1.7638794283729842
+  ],
+  "snitt_forbattring": -6.277312427509507e-05,
+  "battre_manader": 2,
+  "infors": false
  }
 ]

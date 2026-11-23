@@ -1,20 +1,20 @@
 {
  "stram": {
-  "antal_lopp": 5440,
-  "testlopp": 1088,
-  "loglik_marknad": -1.690814127242376,
-  "loglik_bot": -1.6876107361476091
+  "antal_lopp": 5596,
+  "testlopp": 1120,
+  "loglik_marknad": -1.7089445000347991,
+  "loglik_bot": -1.7061877253588753
  },
  "flexibel": {
-  "antal_lopp": 5440,
-  "testlopp": 1088,
-  "loglik_marknad": -1.690814127242376,
-  "loglik_bot": -1.6872955132640999
+  "antal_lopp": 5596,
+  "testlopp": 1120,
+  "loglik_marknad": -1.7089445000347991,
+  "loglik_bot": -1.706049980693887
  },
  "farsk": {
   "antal_lopp": 1490,
   "testlopp": 298,
-  "loglik_marknad": -1.7784698185822483,
-  "loglik_bot": -1.78763028653615
+  "loglik_marknad": -1.763458043767945,
+  "loglik_bot": -1.7582542020370058
  }
 }
