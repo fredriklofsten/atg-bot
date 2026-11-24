@@ -1,12 +1,12 @@
 {
- "spel": 843,
+ "spel": 848,
  "lardomar": [],
  "testade_grupper": 67,
  "orsaker": {
   "arena:egen": {
    "Mitt i fältet": 26,
    "Galopp eller diskad": 23,
-   "Nära (precis utanför)": 16,
+   "Nära (precis utanför)": 17,
    "Marknaden trodde mindre efter spelet": 14,
    "Långt efter": 12,
    "En skräll vann": 2,
@@ -35,7 +35,7 @@
   },
   "arena:huvud": {
    "Mitt i fältet": 13,
-   "Galopp eller diskad": 8,
+   "Galopp eller diskad": 9,
    "Nära (precis utanför)": 6,
    "En skräll vann": 2,
    "Långt efter": 2
@@ -51,7 +51,7 @@
    "Mitt i fältet": 29,
    "Marknaden trodde mindre efter spelet": 28,
    "Långt efter": 19,
-   "Galopp eller diskad": 15,
+   "Galopp eller diskad": 16,
    "Nära (precis utanför)": 15,
    "Struken": 1,
    "En skräll vann": 1
@@ -67,7 +67,7 @@
   },
   "arena:stram": {
    "Mitt i fältet": 14,
-   "Galopp eller diskad": 8,
+   "Galopp eller diskad": 9,
    "Nära (precis utanför)": 7,
    "En skräll vann": 2,
    "Långt efter": 2
@@ -96,10 +96,10 @@
  },
  "clv": {
   "arena:egen": {
-   "spel": 104,
-   "snitt": -0.0734,
-   "se": 0.0177,
-   "andel_battre": 0.327
+   "spel": 105,
+   "snitt": -0.0698,
+   "se": 0.0179,
+   "andel_battre": 0.333
   },
   "arena:farsk": {
    "spel": 34,
@@ -108,10 +108,10 @@
    "andel_battre": 0.735
   },
   "arena:favoriten": {
-   "spel": 117,
-   "snitt": 0.0359,
-   "se": 0.0101,
-   "andel_battre": 0.624
+   "spel": 118,
+   "snitt": 0.0356,
+   "se": 0.01,
+   "andel_battre": 0.627
   },
   "arena:flexibel": {
    "spel": 18,
@@ -120,10 +120,10 @@
    "andel_battre": 0.667
   },
   "arena:huvud": {
-   "spel": 50,
-   "snitt": 0.0604,
-   "se": 0.0156,
-   "andel_battre": 0.68
+   "spel": 51,
+   "snitt": 0.06,
+   "se": 0.0153,
+   "andel_battre": 0.686
   },
   "arena:rad": {
    "spel": 35,
@@ -132,10 +132,10 @@
    "andel_battre": 0.686
   },
   "arena:slumpen": {
-   "spel": 116,
-   "snitt": -0.0923,
+   "spel": 117,
+   "snitt": -0.0944,
    "se": 0.0221,
-   "andel_battre": 0.319
+   "andel_battre": 0.316
   },
   "arena:smarta": {
    "spel": 136,
@@ -144,10 +144,10 @@
    "andel_battre": 0.647
   },
   "arena:stram": {
-   "spel": 54,
-   "snitt": 0.0541,
-   "se": 0.0145,
-   "andel_battre": 0.648
+   "spel": 55,
+   "snitt": 0.0539,
+   "se": 0.0143,
+   "andel_battre": 0.655
   }
  },
  "kalibrering": [
