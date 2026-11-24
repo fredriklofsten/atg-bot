@@ -857,3 +857,7 @@ arena:flexibel|vinnare_2026-11-24_7_4|Vinnare|3,arena:flexibel,2026-11-24T13:23,
 arena:rad|vinnare_2026-11-24_7_4|Vinnare|3,arena:rad,2026-11-24T13:23,vinnare_2026-11-24_7_4,2026-11-24_7_4,Vinnare,3,10.0,2.92,0.36345,vunnen,28.3,0.2911,1.24856,1.0,11,3,2.83,2.83,0.03131,,,0.1009,auto,vann
 arena:smarta|vinnare_2026-11-24_7_4|Vinnare|3,arena:smarta,2026-11-24T13:23,vinnare_2026-11-24_7_4,2026-11-24_7_4,Vinnare,3,10.0,2.92,0.37737,vunnen,28.3,0.2911,1.29639,1.0,11,3,2.83,2.83,0.03131,,,0.1009,auto,vann
 arena:egen|vinnare_2026-11-24_7_4|Vinnare|3,arena:egen,2026-11-24T13:23,vinnare_2026-11-24_7_4,2026-11-24_7_4,Vinnare,3,10.0,2.92,0.59597,vunnen,28.3,0.2911,2.04735,1.0,11,3,2.83,2.83,0.03131,,,0.1009,auto,vann
+huvud|trio_2026-11-24_7_5|Trio|2-1-5,huvud,2026-11-24T13:44,trio_2026-11-24_7_5,2026-11-24_7_5,Trio,2-1-5,10.0,58.73,0.03083,förlorad,0.0,0.01362,2.26296,,7,5,2.59,,,1.0,3.0,,auto,mitten
+arena:favoriten|vinnare_2026-11-24_7_5|Vinnare|1,arena:favoriten,2026-11-24T13:44,vinnare_2026-11-24_7_5,2026-11-24_7_5,Vinnare,1,10.0,1.69,0.50181,förlorad,0.0,0.50296,0.99771,,7,5,2.59,1.9,-0.11713,,,0.05188,auto,galopp_disk
+arena:slumpen|vinnare_2026-11-24_7_5|Vinnare|5,arena:slumpen,2026-11-24T13:44,vinnare_2026-11-24_7_5,2026-11-24_7_5,Vinnare,5,10.0,3.18,0.26668,vunnen,25.9,0.2673,0.99771,1.0,7,5,2.59,2.59,0.20522,,,0.08149,auto,vann
+arena:egen|vinnare_2026-11-24_7_5|Vinnare|2,arena:egen,2026-11-24T13:44,vinnare_2026-11-24_7_5,2026-11-24_7_5,Vinnare,2,10.0,6.7,0.21077,förlorad,0.0,0.12687,1.66133,,7,5,2.59,6.68,0.00299,,,-0.12208,auto,galopp_disk
