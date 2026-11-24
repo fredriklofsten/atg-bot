@@ -1,11 +1,11 @@
 {
- "spel": 821,
+ "spel": 829,
  "lardomar": [],
- "testade_grupper": 66,
+ "testade_grupper": 67,
  "orsaker": {
   "arena:egen": {
    "Mitt i fältet": 26,
-   "Galopp eller diskad": 21,
+   "Galopp eller diskad": 22,
    "Nära (precis utanför)": 16,
    "Marknaden trodde mindre efter spelet": 14,
    "Långt efter": 12,
@@ -96,10 +96,10 @@
  },
  "clv": {
   "arena:egen": {
-   "spel": 102,
-   "snitt": -0.0722,
-   "se": 0.018,
-   "andel_battre": 0.333
+   "spel": 103,
+   "snitt": -0.0731,
+   "se": 0.0179,
+   "andel_battre": 0.33
   },
   "arena:farsk": {
    "spel": 34,
@@ -108,46 +108,46 @@
    "andel_battre": 0.735
   },
   "arena:favoriten": {
-   "spel": 114,
-   "snitt": 0.0348,
-   "se": 0.0102,
-   "andel_battre": 0.623
+   "spel": 115,
+   "snitt": 0.0368,
+   "se": 0.0103,
+   "andel_battre": 0.626
   },
   "arena:flexibel": {
-   "spel": 17,
-   "snitt": 0.0513,
-   "se": 0.0253,
-   "andel_battre": 0.647
+   "spel": 18,
+   "snitt": 0.0629,
+   "se": 0.0265,
+   "andel_battre": 0.667
   },
   "arena:huvud": {
-   "spel": 49,
-   "snitt": 0.0563,
-   "se": 0.0154,
-   "andel_battre": 0.673
+   "spel": 50,
+   "snitt": 0.0604,
+   "se": 0.0156,
+   "andel_battre": 0.68
   },
   "arena:rad": {
-   "spel": 34,
-   "snitt": 0.0404,
-   "se": 0.0146,
-   "andel_battre": 0.676
+   "spel": 35,
+   "snitt": 0.0467,
+   "se": 0.0155,
+   "andel_battre": 0.686
   },
   "arena:slumpen": {
-   "spel": 113,
-   "snitt": -0.0984,
+   "spel": 114,
+   "snitt": -0.0953,
    "se": 0.0223,
-   "andel_battre": 0.31
+   "andel_battre": 0.316
   },
   "arena:smarta": {
-   "spel": 132,
-   "snitt": 0.0565,
+   "spel": 133,
+   "snitt": 0.058,
    "se": 0.0125,
-   "andel_battre": 0.636
+   "andel_battre": 0.639
   },
   "arena:stram": {
-   "spel": 53,
-   "snitt": 0.0502,
-   "se": 0.0143,
-   "andel_battre": 0.642
+   "spel": 54,
+   "snitt": 0.0541,
+   "se": 0.0145,
+   "andel_battre": 0.648
   }
  },
  "kalibrering": [
