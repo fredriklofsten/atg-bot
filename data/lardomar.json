@@ -1,11 +1,11 @@
 {
- "spel": 862,
+ "spel": 871,
  "lardomar": [],
  "testade_grupper": 67,
  "orsaker": {
   "arena:egen": {
    "Mitt i fältet": 26,
-   "Galopp eller diskad": 24,
+   "Galopp eller diskad": 25,
    "Nära (precis utanför)": 17,
    "Marknaden trodde mindre efter spelet": 14,
    "Långt efter": 12,
@@ -21,7 +21,7 @@
   "arena:favoriten": {
    "Galopp eller diskad": 28,
    "Mitt i fältet": 23,
-   "Nära (precis utanför)": 17,
+   "Nära (precis utanför)": 18,
    "En skräll vann": 4,
    "Långt efter": 4,
    "Marknaden trodde mindre efter spelet": 1
@@ -57,9 +57,9 @@
    "En skräll vann": 1
   },
   "arena:smarta": {
-   "Mitt i fältet": 42,
-   "Nära (precis utanför)": 20,
-   "Galopp eller diskad": 19,
+   "Mitt i fältet": 43,
+   "Nära (precis utanför)": 21,
+   "Galopp eller diskad": 20,
    "Långt efter": 10,
    "Marknaden trodde mindre efter spelet": 4,
    "En skräll vann": 3,
@@ -74,32 +74,32 @@
   },
   "huvud": {
    "Nära (precis utanför)": 71,
-   "Mitt i fältet": 60,
+   "Mitt i fältet": 61,
    "Långt efter": 18,
    "En skräll vann": 11,
-   "Galopp eller diskad": 7,
+   "Galopp eller diskad": 9,
    "En avdelning fel": 3,
    "Flera avdelningar fel": 2
   }
  },
  "forsiktighet": {
   "Trio": {
-   "faktor": 0.951,
-   "spel": 138,
+   "faktor": 0.949,
+   "spel": 139,
    "traffar": 2,
-   "forvantat": 2.26,
-   "z": -0.17,
-   "roi": -0.298,
+   "forvantat": 2.27,
+   "z": -0.18,
+   "roi": -0.3031,
    "clv": null,
    "clv_n": 0
   }
  },
  "clv": {
   "arena:egen": {
-   "spel": 107,
-   "snitt": -0.0682,
-   "se": 0.0176,
-   "andel_battre": 0.346
+   "spel": 108,
+   "snitt": -0.0693,
+   "se": 0.0175,
+   "andel_battre": 0.343
   },
   "arena:farsk": {
    "spel": 34,
@@ -108,10 +108,10 @@
    "andel_battre": 0.735
   },
   "arena:favoriten": {
-   "spel": 120,
-   "snitt": 0.0343,
-   "se": 0.01,
-   "andel_battre": 0.625
+   "spel": 121,
+   "snitt": 0.0333,
+   "se": 0.0099,
+   "andel_battre": 0.62
   },
   "arena:flexibel": {
    "spel": 19,
@@ -132,15 +132,15 @@
    "andel_battre": 0.694
   },
   "arena:slumpen": {
-   "spel": 119,
-   "snitt": -0.0919,
-   "se": 0.0218,
-   "andel_battre": 0.319
+   "spel": 120,
+   "snitt": -0.092,
+   "se": 0.0216,
+   "andel_battre": 0.317
   },
   "arena:smarta": {
-   "spel": 137,
-   "snitt": 0.0586,
-   "se": 0.0121,
+   "spel": 140,
+   "snitt": 0.06,
+   "se": 0.0122,
    "andel_battre": 0.65
   },
   "arena:stram": {
@@ -153,7 +153,7 @@
  "kalibrering": [
   {
    "grupp": "0–3 %",
-   "spel": 131,
+   "spel": 132,
    "trodde": 0.015,
    "blev": 0.0076
   },
@@ -165,9 +165,9 @@
   },
   {
    "grupp": "7–15 %",
-   "spel": 24,
-   "trodde": 0.0909,
-   "blev": 0.0417
+   "spel": 26,
+   "trodde": 0.0925,
+   "blev": 0.0385
   },
   {
    "grupp": "30–100 %",
@@ -177,6 +177,36 @@
   }
  ],
  "senaste_forluster": [
+  {
+   "skapad": "2026-11-24T14:04",
+   "typ": "Plats-pool",
+   "val": "2",
+   "odds": 12.32,
+   "chans": 0.0999,
+   "placering": null,
+   "vinnare": 1,
+   "orsak": "Galopp eller diskad"
+  },
+  {
+   "skapad": "2026-11-24T14:04",
+   "typ": "Plats",
+   "val": "12",
+   "odds": 9.79,
+   "chans": 0.1256,
+   "placering": null,
+   "vinnare": 1,
+   "orsak": "Galopp eller diskad"
+  },
+  {
+   "skapad": "2026-11-24T14:04",
+   "typ": "Trio",
+   "val": "10-4-1",
+   "odds": 117.34,
+   "chans": 0.01319,
+   "placering": null,
+   "vinnare": 1,
+   "orsak": "Mitt i fältet"
+  },
   {
    "skapad": "2026-11-24T13:44",
    "typ": "Trio",
@@ -266,36 +296,6 @@
    "placering": null,
    "vinnare": 2,
    "orsak": "Nära (precis utanför)"
-  },
-  {
-   "skapad": "2026-11-23T21:30",
-   "typ": "Trio",
-   "val": "2-3-1",
-   "odds": 120.72,
-   "chans": 0.01609,
-   "placering": null,
-   "vinnare": 2,
-   "orsak": "Nära (precis utanför)"
-  },
-  {
-   "skapad": "2026-11-23T20:53",
-   "typ": "Plats-pool",
-   "val": "11",
-   "odds": 21.29,
-   "chans": 0.07047,
-   "placering": 9,
-   "vinnare": 1,
-   "orsak": "Långt efter"
-  },
-  {
-   "skapad": "2026-11-23T20:53",
-   "typ": "Trio",
-   "val": "1-7-5",
-   "odds": 96.99,
-   "chans": 0.01335,
-   "placering": null,
-   "vinnare": 1,
-   "orsak": "Mitt i fältet"
   }
  ]
 }
