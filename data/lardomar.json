@@ -1,11 +1,11 @@
 {
- "spel": 910,
+ "spel": 913,
  "lardomar": [],
  "testade_grupper": 68,
  "orsaker": {
   "arena:egen": {
    "Mitt i fältet": 29,
-   "Galopp eller diskad": 27,
+   "Galopp eller diskad": 28,
    "Nära (precis utanför)": 17,
    "Marknaden trodde mindre efter spelet": 14,
    "Långt efter": 12,
@@ -19,7 +19,7 @@
    "En skräll vann": 2
   },
   "arena:favoriten": {
-   "Galopp eller diskad": 29,
+   "Galopp eller diskad": 30,
    "Mitt i fältet": 24,
    "Nära (precis utanför)": 18,
    "En skräll vann": 4,
@@ -50,7 +50,7 @@
   "arena:slumpen": {
    "Mitt i fältet": 29,
    "Marknaden trodde mindre efter spelet": 28,
-   "Galopp eller diskad": 22,
+   "Galopp eller diskad": 23,
    "Långt efter": 19,
    "Nära (precis utanför)": 15,
    "Struken": 1,
@@ -96,10 +96,10 @@
  },
  "clv": {
   "arena:egen": {
-   "spel": 113,
-   "snitt": -0.0701,
-   "se": 0.0171,
-   "andel_battre": 0.345
+   "spel": 114,
+   "snitt": -0.0665,
+   "se": 0.0173,
+   "andel_battre": 0.351
   },
   "arena:farsk": {
    "spel": 34,
@@ -108,10 +108,10 @@
    "andel_battre": 0.735
   },
   "arena:favoriten": {
-   "spel": 126,
-   "snitt": 0.0335,
-   "se": 0.0097,
-   "andel_battre": 0.619
+   "spel": 127,
+   "snitt": 0.0334,
+   "se": 0.0096,
+   "andel_battre": 0.622
   },
   "arena:flexibel": {
    "spel": 22,
@@ -132,10 +132,10 @@
    "andel_battre": 0.692
   },
   "arena:slumpen": {
-   "spel": 125,
-   "snitt": -0.1049,
-   "se": 0.0219,
-   "andel_battre": 0.304
+   "spel": 126,
+   "snitt": -0.103,
+   "se": 0.0218,
+   "andel_battre": 0.31
   },
   "arena:smarta": {
    "spel": 146,
