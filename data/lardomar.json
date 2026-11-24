@@ -1,11 +1,11 @@
 {
- "spel": 890,
+ "spel": 895,
  "lardomar": [],
  "testade_grupper": 68,
  "orsaker": {
   "arena:egen": {
    "Mitt i fältet": 27,
-   "Galopp eller diskad": 26,
+   "Galopp eller diskad": 27,
    "Nära (precis utanför)": 17,
    "Marknaden trodde mindre efter spelet": 14,
    "Långt efter": 12,
@@ -19,7 +19,7 @@
    "En skräll vann": 2
   },
   "arena:favoriten": {
-   "Galopp eller diskad": 28,
+   "Galopp eller diskad": 29,
    "Mitt i fältet": 24,
    "Nära (precis utanför)": 18,
    "En skräll vann": 4,
@@ -50,8 +50,8 @@
   "arena:slumpen": {
    "Mitt i fältet": 29,
    "Marknaden trodde mindre efter spelet": 28,
+   "Galopp eller diskad": 20,
    "Långt efter": 19,
-   "Galopp eller diskad": 19,
    "Nära (precis utanför)": 15,
    "Struken": 1,
    "En skräll vann": 1
@@ -73,7 +73,7 @@
    "Långt efter": 2
   },
   "huvud": {
-   "Nära (precis utanför)": 73,
+   "Nära (precis utanför)": 74,
    "Mitt i fältet": 61,
    "Långt efter": 18,
    "En skräll vann": 11,
@@ -84,22 +84,22 @@
  },
  "forsiktighet": {
   "Trio": {
-   "faktor": 0.945,
-   "spel": 141,
+   "faktor": 0.942,
+   "spel": 142,
    "traffar": 2,
-   "forvantat": 2.29,
-   "z": -0.19,
-   "roi": -0.313,
+   "forvantat": 2.31,
+   "z": -0.21,
+   "roi": -0.3178,
    "clv": null,
    "clv_n": 0
   }
  },
  "clv": {
   "arena:egen": {
-   "spel": 110,
-   "snitt": -0.0718,
-   "se": 0.0175,
-   "andel_battre": 0.345
+   "spel": 111,
+   "snitt": -0.0715,
+   "se": 0.0173,
+   "andel_battre": 0.342
   },
   "arena:farsk": {
    "spel": 34,
@@ -108,10 +108,10 @@
    "andel_battre": 0.735
   },
   "arena:favoriten": {
-   "spel": 123,
-   "snitt": 0.032,
+   "spel": 124,
+   "snitt": 0.0314,
    "se": 0.0098,
-   "andel_battre": 0.618
+   "andel_battre": 0.613
   },
   "arena:flexibel": {
    "spel": 21,
@@ -132,16 +132,16 @@
    "andel_battre": 0.684
   },
   "arena:slumpen": {
-   "spel": 122,
-   "snitt": -0.0944,
-   "se": 0.0215,
-   "andel_battre": 0.311
+   "spel": 123,
+   "snitt": -0.0968,
+   "se": 0.0214,
+   "andel_battre": 0.309
   },
   "arena:smarta": {
-   "spel": 143,
+   "spel": 144,
    "snitt": 0.0602,
-   "se": 0.0121,
-   "andel_battre": 0.65
+   "se": 0.012,
+   "andel_battre": 0.653
   },
   "arena:stram": {
    "spel": 58,
@@ -153,9 +153,9 @@
  "kalibrering": [
   {
    "grupp": "0–3 %",
-   "spel": 134,
-   "trodde": 0.0149,
-   "blev": 0.0075
+   "spel": 135,
+   "trodde": 0.015,
+   "blev": 0.0074
   },
   {
    "grupp": "3–7 %",
@@ -177,6 +177,16 @@
   }
  ],
  "senaste_forluster": [
+  {
+   "skapad": "2026-11-24T18:17",
+   "typ": "Trio",
+   "val": "5-8-2",
+   "odds": 80.03,
+   "chans": 0.01712,
+   "placering": null,
+   "vinnare": 5,
+   "orsak": "Nära (precis utanför)"
+  },
   {
    "skapad": "2026-11-24T14:43",
    "typ": "Trio",
@@ -283,16 +293,6 @@
    "val": "12",
    "odds": 19.21,
    "chans": 0.08092,
-   "placering": null,
-   "vinnare": 4,
-   "orsak": "Galopp eller diskad"
-  },
-  {
-   "skapad": "2026-11-24T12:17",
-   "typ": "Plats-pool",
-   "val": "9",
-   "odds": 13.63,
-   "chans": 0.09244,
    "placering": null,
    "vinnare": 4,
    "orsak": "Galopp eller diskad"
