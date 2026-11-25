@@ -1,18 +1,18 @@
 {
- "spel": 963,
+ "spel": 968,
  "lardomar": [
   {
    "kalla": "arena:egen",
    "rubrik": "Speltyp",
    "grupp": "Vinnare",
-   "spel": 121,
+   "spel": 122,
    "traffar": 12,
-   "forvantat": 21.9,
-   "z": -2.56,
-   "roi": 0.8468,
-   "clv": -0.0619,
-   "clv_n": 120,
-   "text": "Arenans bot 'egen' överskattar sina chanser för speltyp = Vinnare: 12 träffar på 121 spel, men den räknade med 21.9."
+   "forvantat": 22.03,
+   "z": -2.58,
+   "roi": 0.8316,
+   "clv": -0.0607,
+   "clv_n": 121,
+   "text": "Arenans bot 'egen' överskattar sina chanser för speltyp = Vinnare: 12 träffar på 122 spel, men den räknade med 22.0."
   }
  ],
  "testade_grupper": 74,
@@ -20,7 +20,7 @@
   "arena:egen": {
    "Galopp eller diskad": 31,
    "Mitt i fältet": 30,
-   "Nära (precis utanför)": 18,
+   "Nära (precis utanför)": 19,
    "Marknaden trodde mindre efter spelet": 14,
    "Långt efter": 12,
    "En skräll vann": 3,
@@ -33,7 +33,7 @@
    "En skräll vann": 2
   },
   "arena:favoriten": {
-   "Galopp eller diskad": 33,
+   "Galopp eller diskad": 34,
    "Mitt i fältet": 26,
    "Nära (precis utanför)": 19,
    "En skräll vann": 4,
@@ -63,7 +63,7 @@
   },
   "arena:slumpen": {
    "Mitt i fältet": 29,
-   "Galopp eller diskad": 28,
+   "Galopp eller diskad": 29,
    "Marknaden trodde mindre efter spelet": 28,
    "Långt efter": 19,
    "Nära (precis utanför)": 16,
@@ -90,7 +90,7 @@
    "Nära (precis utanför)": 77,
    "Mitt i fältet": 63,
    "Långt efter": 18,
-   "Galopp eller diskad": 16,
+   "Galopp eller diskad": 18,
    "En skräll vann": 13,
    "En avdelning fel": 4,
    "Flera avdelningar fel": 3,
@@ -98,6 +98,16 @@
   }
  },
  "forsiktighet": {
+  "Plats": {
+   "faktor": 0.616,
+   "spel": 20,
+   "traffar": 0,
+   "forvantat": 1.87,
+   "z": -1.45,
+   "roi": -1.0,
+   "clv": null,
+   "clv_n": 0
+  },
   "Plats-pool": {
    "faktor": 0.791,
    "spel": 22,
@@ -121,10 +131,10 @@
  },
  "clv": {
   "arena:egen": {
-   "spel": 120,
-   "snitt": -0.0619,
-   "se": 0.017,
-   "andel_battre": 0.358
+   "spel": 121,
+   "snitt": -0.0607,
+   "se": 0.0169,
+   "andel_battre": 0.364
   },
   "arena:farsk": {
    "spel": 34,
@@ -133,10 +143,10 @@
    "andel_battre": 0.735
   },
   "arena:favoriten": {
-   "spel": 134,
-   "snitt": 0.033,
-   "se": 0.0094,
-   "andel_battre": 0.627
+   "spel": 135,
+   "snitt": 0.0333,
+   "se": 0.0093,
+   "andel_battre": 0.63
   },
   "arena:flexibel": {
    "spel": 22,
@@ -157,10 +167,10 @@
    "andel_battre": 0.675
   },
   "arena:slumpen": {
-   "spel": 133,
-   "snitt": -0.1122,
-   "se": 0.0216,
-   "andel_battre": 0.308
+   "spel": 134,
+   "snitt": -0.113,
+   "se": 0.0214,
+   "andel_battre": 0.306
   },
   "arena:smarta": {
    "spel": 155,
@@ -190,9 +200,9 @@
   },
   {
    "grupp": "7–15 %",
-   "spel": 31,
-   "trodde": 0.0917,
-   "blev": 0.0323
+   "spel": 33,
+   "trodde": 0.0918,
+   "blev": 0.0303
   },
   {
    "grupp": "15–30 %",
@@ -209,6 +219,26 @@
  ],
  "senaste_forluster": [
   {
+   "skapad": "2026-11-25T12:39",
+   "typ": "Plats",
+   "val": "8",
+   "odds": 15.63,
+   "chans": 0.09656,
+   "placering": null,
+   "vinnare": 1,
+   "orsak": "Galopp eller diskad"
+  },
+  {
+   "skapad": "2026-11-25T12:39",
+   "typ": "Plats",
+   "val": "9",
+   "odds": 17.47,
+   "chans": 0.09252,
+   "placering": null,
+   "vinnare": 1,
+   "orsak": "Galopp eller diskad"
+  },
+  {
    "skapad": "2026-11-24T21:12",
    "typ": "Trio",
    "val": "1-11-10",
@@ -220,16 +250,6 @@
   },
   {
    "skapad": "2026-11-24T20:53",
-   "typ": "Trio",
-   "val": "7-3-8",
-   "odds": 70.05,
-   "chans": 0.0187,
-   "placering": null,
-   "vinnare": 9,
-   "orsak": "En skräll vann"
-  },
-  {
-   "skapad": "2026-11-24T20:53",
    "typ": "V3",
    "val": "7,3,10,2,8/1,10,2,5,12,9,11/6,7,8",
    "odds": null,
@@ -237,6 +257,16 @@
    "placering": null,
    "vinnare": null,
    "orsak": "Flera avdelningar fel"
+  },
+  {
+   "skapad": "2026-11-24T20:53",
+   "typ": "Trio",
+   "val": "7-3-8",
+   "odds": 70.05,
+   "chans": 0.0187,
+   "placering": null,
+   "vinnare": 9,
+   "orsak": "En skräll vann"
   },
   {
    "skapad": "2026-11-24T20:33",
@@ -300,33 +330,13 @@
   },
   {
    "skapad": "2026-11-24T19:49",
-   "typ": "Plats-pool",
-   "val": "6",
-   "odds": 14.86,
-   "chans": 0.08857,
+   "typ": "Plats",
+   "val": "4",
+   "odds": 32.21,
+   "chans": 0.06408,
    "placering": null,
    "vinnare": 3,
-   "orsak": "Galopp eller diskad"
-  },
-  {
-   "skapad": "2026-11-24T19:49",
-   "typ": "Plats-pool",
-   "val": "10",
-   "odds": 15.75,
-   "chans": 0.0855,
-   "placering": null,
-   "vinnare": 3,
-   "orsak": "Galopp eller diskad"
-  },
-  {
-   "skapad": "2026-11-24T19:49",
-   "typ": "Plats-pool",
-   "val": "5",
-   "odds": 16.39,
-   "chans": 0.0855,
-   "placering": null,
-   "vinnare": 3,
-   "orsak": "Galopp eller diskad"
+   "orsak": "Struken"
   }
  ]
 }
