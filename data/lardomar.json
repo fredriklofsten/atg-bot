@@ -1,5 +1,5 @@
 {
- "spel": 1025,
+ "spel": 1027,
  "lardomar": [
   {
    "kalla": "arena:egen",
@@ -87,7 +87,7 @@
    "Långt efter": 2
   },
   "huvud": {
-   "Nära (precis utanför)": 82,
+   "Nära (precis utanför)": 84,
    "Mitt i fältet": 64,
    "Galopp eller diskad": 19,
    "Långt efter": 18,
@@ -119,12 +119,12 @@
    "clv_n": 0
   },
   "Trio": {
-   "faktor": 0.917,
-   "spel": 151,
+   "faktor": 0.916,
+   "spel": 152,
    "traffar": 2,
-   "forvantat": 2.45,
-   "z": -0.29,
-   "roi": -0.3585,
+   "forvantat": 2.46,
+   "z": -0.3,
+   "roi": -0.3627,
    "clv": null,
    "clv_n": 0
   }
@@ -188,7 +188,7 @@
  "kalibrering": [
   {
    "grupp": "0–3 %",
-   "spel": 146,
+   "spel": 148,
    "trodde": 0.015,
    "blev": 0.0068
   },
@@ -218,6 +218,26 @@
   }
  ],
  "senaste_forluster": [
+  {
+   "skapad": "2026-11-25T18:24",
+   "typ": "Trio-pool",
+   "val": "4-9-8",
+   "odds": 93.18,
+   "chans": 0.01421,
+   "placering": null,
+   "vinnare": 4,
+   "orsak": "Nära (precis utanför)"
+  },
+  {
+   "skapad": "2026-11-25T18:24",
+   "typ": "Trio",
+   "val": "4-6-5",
+   "odds": 85.07,
+   "chans": 0.01541,
+   "placering": null,
+   "vinnare": 4,
+   "orsak": "Nära (precis utanför)"
+  },
   {
    "skapad": "2026-11-25T18:12",
    "typ": "Trio-pool",
@@ -317,26 +337,6 @@
    "placering": null,
    "vinnare": 9,
    "orsak": "Nära (precis utanför)"
-  },
-  {
-   "skapad": "2026-11-24T20:53",
-   "typ": "Trio",
-   "val": "7-3-8",
-   "odds": 70.05,
-   "chans": 0.0187,
-   "placering": null,
-   "vinnare": 9,
-   "orsak": "En skräll vann"
-  },
-  {
-   "skapad": "2026-11-24T20:53",
-   "typ": "V3",
-   "val": "7,3,10,2,8/1,10,2,5,12,9,11/6,7,8",
-   "odds": null,
-   "chans": 0.48602,
-   "placering": null,
-   "vinnare": null,
-   "orsak": "Flera avdelningar fel"
   }
  ]
 }
