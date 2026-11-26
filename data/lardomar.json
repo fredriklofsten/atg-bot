@@ -1,5 +1,5 @@
 {
- "spel": 1141,
+ "spel": 1144,
  "lardomar": [
   {
    "kalla": "arena:egen",
@@ -46,7 +46,7 @@
    "En skräll vann": 2
   },
   "arena:favoriten": {
-   "Galopp eller diskad": 39,
+   "Galopp eller diskad": 40,
    "Mitt i fältet": 30,
    "Nära (precis utanför)": 24,
    "En skräll vann": 4,
@@ -101,7 +101,7 @@
   },
   "huvud": {
    "Nära (precis utanför)": 90,
-   "Mitt i fältet": 75,
+   "Mitt i fältet": 76,
    "Galopp eller diskad": 20,
    "Långt efter": 18,
    "En skräll vann": 13,
@@ -146,10 +146,10 @@
    "andel_battre": 0.743
   },
   "arena:favoriten": {
-   "spel": 160,
-   "snitt": 0.0337,
-   "se": 0.0086,
-   "andel_battre": 0.631
+   "spel": 161,
+   "snitt": 0.0324,
+   "se": 0.0087,
+   "andel_battre": 0.627
   },
   "arena:flexibel": {
    "spel": 25,
@@ -170,10 +170,10 @@
    "andel_battre": 0.688
   },
   "arena:slumpen": {
-   "spel": 159,
-   "snitt": -0.1047,
-   "se": 0.0195,
-   "andel_battre": 0.321
+   "spel": 160,
+   "snitt": -0.1014,
+   "se": 0.0197,
+   "andel_battre": 0.325
   },
   "arena:smarta": {
    "spel": 187,
@@ -191,9 +191,9 @@
  "kalibrering": [
   {
    "grupp": "0–3 %",
-   "spel": 165,
+   "spel": 166,
    "trodde": 0.0148,
-   "blev": 0.0121
+   "blev": 0.012
   },
   {
    "grupp": "3–7 %",
@@ -221,6 +221,16 @@
   }
  ],
  "senaste_forluster": [
+  {
+   "skapad": "2026-11-26T12:39",
+   "typ": "Trio",
+   "val": "6-8-2",
+   "odds": 123.93,
+   "chans": 0.0101,
+   "placering": null,
+   "vinnare": 6,
+   "orsak": "Mitt i fältet"
+  },
   {
    "skapad": "2026-11-26T12:17",
    "typ": "Trio",
@@ -273,16 +283,6 @@
   },
   {
    "skapad": "2026-11-25T21:12",
-   "typ": "V4",
-   "val": "6/1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11/2,4,9,8,5",
-   "odds": null,
-   "chans": 8.00566,
-   "placering": null,
-   "vinnare": null,
-   "orsak": "En avdelning fel"
-  },
-  {
-   "skapad": "2026-11-25T21:12",
    "typ": "Trio",
    "val": "6-4-11",
    "odds": 141.26,
@@ -290,6 +290,16 @@
    "placering": null,
    "vinnare": 9,
    "orsak": "Mitt i fältet"
+  },
+  {
+   "skapad": "2026-11-25T21:12",
+   "typ": "V4",
+   "val": "6/1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11/2,4,9,8,5",
+   "odds": null,
+   "chans": 8.00566,
+   "placering": null,
+   "vinnare": null,
+   "orsak": "En avdelning fel"
   },
   {
    "skapad": "2026-11-25T21:00",
@@ -330,16 +340,6 @@
    "placering": null,
    "vinnare": null,
    "orsak": "Flera avdelningar fel"
-  },
-  {
-   "skapad": "2026-11-25T20:10",
-   "typ": "Trio",
-   "val": "8-3-10",
-   "odds": 81.45,
-   "chans": 0.0248,
-   "placering": null,
-   "vinnare": 10,
-   "orsak": "Mitt i fältet"
   }
  ]
 }
