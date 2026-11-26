@@ -1,18 +1,18 @@
 {
- "spel": 1148,
+ "spel": 1152,
  "lardomar": [
   {
    "kalla": "arena:egen",
    "rubrik": "Speltyp",
    "grupp": "Vinnare",
-   "spel": 146,
+   "spel": 147,
    "traffar": 13,
-   "forvantat": 26.63,
-   "z": -3.18,
-   "roi": 0.554,
-   "clv": -0.0524,
-   "clv_n": 145,
-   "text": "Arenans bot 'egen' överskattar sina chanser för speltyp = Vinnare: 13 träffar på 146 spel, men den räknade med 26.6."
+   "forvantat": 26.86,
+   "z": -3.22,
+   "roi": 0.5435,
+   "clv": -0.0517,
+   "clv_n": 146,
+   "text": "Arenans bot 'egen' överskattar sina chanser för speltyp = Vinnare: 13 träffar på 147 spel, men den räknade med 26.9."
   },
   {
    "kalla": "arena:egen",
@@ -32,7 +32,7 @@
  "orsaker": {
   "arena:egen": {
    "Galopp eller diskad": 43,
-   "Mitt i fältet": 35,
+   "Mitt i fältet": 36,
    "Nära (precis utanför)": 24,
    "Marknaden trodde mindre efter spelet": 15,
    "Långt efter": 12,
@@ -48,7 +48,7 @@
   "arena:favoriten": {
    "Galopp eller diskad": 40,
    "Mitt i fältet": 30,
-   "Nära (precis utanför)": 24,
+   "Nära (precis utanför)": 25,
    "En skräll vann": 4,
    "Långt efter": 4,
    "Marknaden trodde mindre efter spelet": 1
@@ -79,7 +79,7 @@
    "Mitt i fältet": 33,
    "Marknaden trodde mindre efter spelet": 30,
    "Långt efter": 19,
-   "Nära (precis utanför)": 18,
+   "Nära (precis utanför)": 19,
    "Struken": 1,
    "En skräll vann": 1
   },
@@ -134,10 +134,10 @@
  },
  "clv": {
   "arena:egen": {
-   "spel": 145,
-   "snitt": -0.0524,
-   "se": 0.0163,
-   "andel_battre": 0.359
+   "spel": 146,
+   "snitt": -0.0517,
+   "se": 0.0162,
+   "andel_battre": 0.363
   },
   "arena:farsk": {
    "spel": 35,
@@ -146,10 +146,10 @@
    "andel_battre": 0.743
   },
   "arena:favoriten": {
-   "spel": 162,
-   "snitt": 0.0317,
-   "se": 0.0087,
-   "andel_battre": 0.623
+   "spel": 163,
+   "snitt": 0.0322,
+   "se": 0.0086,
+   "andel_battre": 0.626
   },
   "arena:flexibel": {
    "spel": 25,
@@ -170,16 +170,16 @@
    "andel_battre": 0.688
   },
   "arena:slumpen": {
-   "spel": 161,
-   "snitt": -0.1015,
+   "spel": 162,
+   "snitt": -0.1002,
    "se": 0.0195,
-   "andel_battre": 0.323
+   "andel_battre": 0.327
   },
   "arena:smarta": {
-   "spel": 188,
-   "snitt": 0.055,
+   "spel": 189,
+   "snitt": 0.0542,
    "se": 0.0107,
-   "andel_battre": 0.628
+   "andel_battre": 0.624
   },
   "arena:stram": {
    "spel": 74,
