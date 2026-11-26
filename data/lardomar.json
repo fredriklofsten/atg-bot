@@ -1,18 +1,18 @@
 {
- "spel": 1144,
+ "spel": 1148,
  "lardomar": [
   {
    "kalla": "arena:egen",
    "rubrik": "Speltyp",
    "grupp": "Vinnare",
-   "spel": 145,
+   "spel": 146,
    "traffar": 13,
-   "forvantat": 26.59,
+   "forvantat": 26.63,
    "z": -3.18,
-   "roi": 0.5648,
-   "clv": -0.0527,
-   "clv_n": 144,
-   "text": "Arenans bot 'egen' överskattar sina chanser för speltyp = Vinnare: 13 träffar på 145 spel, men den räknade med 26.6."
+   "roi": 0.554,
+   "clv": -0.0524,
+   "clv_n": 145,
+   "text": "Arenans bot 'egen' överskattar sina chanser för speltyp = Vinnare: 13 träffar på 146 spel, men den räknade med 26.6."
   },
   {
    "kalla": "arena:egen",
@@ -31,7 +31,7 @@
  "testade_grupper": 83,
  "orsaker": {
   "arena:egen": {
-   "Galopp eller diskad": 42,
+   "Galopp eller diskad": 43,
    "Mitt i fältet": 35,
    "Nära (precis utanför)": 24,
    "Marknaden trodde mindre efter spelet": 15,
@@ -75,7 +75,7 @@
    "En skräll vann": 1
   },
   "arena:slumpen": {
-   "Galopp eller diskad": 43,
+   "Galopp eller diskad": 44,
    "Mitt i fältet": 33,
    "Marknaden trodde mindre efter spelet": 30,
    "Långt efter": 19,
@@ -134,10 +134,10 @@
  },
  "clv": {
   "arena:egen": {
-   "spel": 144,
-   "snitt": -0.0527,
-   "se": 0.0164,
-   "andel_battre": 0.361
+   "spel": 145,
+   "snitt": -0.0524,
+   "se": 0.0163,
+   "andel_battre": 0.359
   },
   "arena:farsk": {
    "spel": 35,
@@ -146,10 +146,10 @@
    "andel_battre": 0.743
   },
   "arena:favoriten": {
-   "spel": 161,
-   "snitt": 0.0324,
+   "spel": 162,
+   "snitt": 0.0317,
    "se": 0.0087,
-   "andel_battre": 0.627
+   "andel_battre": 0.623
   },
   "arena:flexibel": {
    "spel": 25,
@@ -170,16 +170,16 @@
    "andel_battre": 0.688
   },
   "arena:slumpen": {
-   "spel": 160,
-   "snitt": -0.1014,
-   "se": 0.0197,
-   "andel_battre": 0.325
+   "spel": 161,
+   "snitt": -0.1015,
+   "se": 0.0195,
+   "andel_battre": 0.323
   },
   "arena:smarta": {
-   "spel": 187,
-   "snitt": 0.0557,
+   "spel": 188,
+   "snitt": 0.055,
    "se": 0.0107,
-   "andel_battre": 0.631
+   "andel_battre": 0.628
   },
   "arena:stram": {
    "spel": 74,
