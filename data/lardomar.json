@@ -1,18 +1,18 @@
 {
- "spel": 1170,
+ "spel": 1178,
  "lardomar": [
   {
    "kalla": "arena:egen",
    "rubrik": "Speltyp",
    "grupp": "Vinnare",
-   "spel": 149,
+   "spel": 150,
    "traffar": 13,
-   "forvantat": 26.99,
-   "z": -3.24,
-   "roi": 0.5228,
-   "clv": -0.054,
-   "clv_n": 148,
-   "text": "Arenans bot 'egen' överskattar sina chanser för speltyp = Vinnare: 13 träffar på 149 spel, men den räknade med 27.0."
+   "forvantat": 27.11,
+   "z": -3.26,
+   "roi": 0.5126,
+   "clv": -0.0551,
+   "clv_n": 149,
+   "text": "Arenans bot 'egen' överskattar sina chanser för speltyp = Vinnare: 13 träffar på 150 spel, men den räknade med 27.1."
   },
   {
    "kalla": "arena:egen",
@@ -28,10 +28,10 @@
    "text": "Arenans bot 'egen' överskattar sina chanser för oddsrörelse före spelet = uppspelad: 2 träffar på 73 spel, men den räknade med 9.0."
   }
  ],
- "testade_grupper": 83,
+ "testade_grupper": 85,
  "orsaker": {
   "arena:egen": {
-   "Galopp eller diskad": 44,
+   "Galopp eller diskad": 45,
    "Mitt i fältet": 37,
    "Nära (precis utanför)": 24,
    "Marknaden trodde mindre efter spelet": 15,
@@ -46,7 +46,7 @@
    "En skräll vann": 2
   },
   "arena:favoriten": {
-   "Galopp eller diskad": 41,
+   "Galopp eller diskad": 42,
    "Mitt i fältet": 30,
    "Nära (precis utanför)": 27,
    "En skräll vann": 4,
@@ -56,26 +56,26 @@
   "arena:flexibel": {
    "Mitt i fältet": 8,
    "Nära (precis utanför)": 4,
-   "Galopp eller diskad": 3,
+   "Galopp eller diskad": 4,
    "En skräll vann": 1,
    "Långt efter": 1
   },
   "arena:huvud": {
    "Mitt i fältet": 17,
-   "Galopp eller diskad": 13,
+   "Galopp eller diskad": 14,
    "Nära (precis utanför)": 11,
    "En skräll vann": 2,
    "Långt efter": 2
   },
   "arena:rad": {
    "Mitt i fältet": 12,
-   "Galopp eller diskad": 9,
+   "Galopp eller diskad": 10,
    "Nära (precis utanför)": 8,
    "Långt efter": 2,
    "En skräll vann": 1
   },
   "arena:slumpen": {
-   "Galopp eller diskad": 46,
+   "Galopp eller diskad": 47,
    "Mitt i fältet": 33,
    "Marknaden trodde mindre efter spelet": 30,
    "Nära (precis utanför)": 20,
@@ -85,7 +85,7 @@
   },
   "arena:smarta": {
    "Mitt i fältet": 55,
-   "Galopp eller diskad": 33,
+   "Galopp eller diskad": 34,
    "Nära (precis utanför)": 31,
    "Långt efter": 10,
    "Marknaden trodde mindre efter spelet": 5,
@@ -94,7 +94,7 @@
   },
   "arena:stram": {
    "Mitt i fältet": 18,
-   "Galopp eller diskad": 13,
+   "Galopp eller diskad": 14,
    "Nära (precis utanför)": 12,
    "En skräll vann": 2,
    "Långt efter": 2
@@ -134,10 +134,10 @@
  },
  "clv": {
   "arena:egen": {
-   "spel": 148,
-   "snitt": -0.054,
-   "se": 0.0161,
-   "andel_battre": 0.358
+   "spel": 149,
+   "snitt": -0.0551,
+   "se": 0.016,
+   "andel_battre": 0.356
   },
   "arena:farsk": {
    "spel": 35,
@@ -146,46 +146,46 @@
    "andel_battre": 0.743
   },
   "arena:favoriten": {
-   "spel": 166,
-   "snitt": 0.0322,
-   "se": 0.0085,
-   "andel_battre": 0.627
+   "spel": 167,
+   "snitt": 0.0323,
+   "se": 0.0084,
+   "andel_battre": 0.629
   },
   "arena:flexibel": {
-   "spel": 25,
-   "snitt": 0.0846,
-   "se": 0.0277,
-   "andel_battre": 0.72
+   "spel": 26,
+   "snitt": 0.0835,
+   "se": 0.0266,
+   "andel_battre": 0.731
   },
   "arena:huvud": {
-   "spel": 72,
-   "snitt": 0.0657,
-   "se": 0.0146,
-   "andel_battre": 0.708
+   "spel": 73,
+   "snitt": 0.0656,
+   "se": 0.0144,
+   "andel_battre": 0.712
   },
   "arena:rad": {
-   "spel": 50,
+   "spel": 51,
    "snitt": 0.0539,
-   "se": 0.0172,
-   "andel_battre": 0.7
+   "se": 0.0169,
+   "andel_battre": 0.706
   },
   "arena:slumpen": {
-   "spel": 165,
-   "snitt": -0.102,
-   "se": 0.0192,
-   "andel_battre": 0.321
+   "spel": 166,
+   "snitt": -0.1009,
+   "se": 0.0191,
+   "andel_battre": 0.325
   },
   "arena:smarta": {
-   "spel": 191,
+   "spel": 192,
    "snitt": 0.0538,
-   "se": 0.0106,
-   "andel_battre": 0.623
+   "se": 0.0105,
+   "andel_battre": 0.625
   },
   "arena:stram": {
-   "spel": 76,
-   "snitt": 0.061,
-   "se": 0.0139,
-   "andel_battre": 0.684
+   "spel": 77,
+   "snitt": 0.0609,
+   "se": 0.0137,
+   "andel_battre": 0.688
   }
  },
  "kalibrering": [
