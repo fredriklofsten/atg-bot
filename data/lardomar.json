@@ -1,38 +1,38 @@
 {
- "spel": 1296,
+ "spel": 1302,
  "lardomar": [
   {
    "kalla": "arena:egen",
    "rubrik": "Speltyp",
    "grupp": "Vinnare",
-   "spel": 167,
+   "spel": 168,
    "traffar": 15,
-   "forvantat": 29.78,
+   "forvantat": 29.83,
    "z": -3.26,
-   "roi": 0.3937,
-   "clv": -0.0447,
-   "clv_n": 166,
-   "text": "Arenans bot 'egen' överskattar sina chanser för speltyp = Vinnare: 15 träffar på 167 spel, men den räknade med 29.8."
+   "roi": 0.3854,
+   "clv": -0.043,
+   "clv_n": 167,
+   "text": "Arenans bot 'egen' överskattar sina chanser för speltyp = Vinnare: 15 träffar på 168 spel, men den räknade med 29.8."
   },
   {
    "kalla": "arena:egen",
    "rubrik": "Oddsrörelse före spelet",
    "grupp": "uppspelad",
-   "spel": 85,
+   "spel": 86,
    "traffar": 2,
-   "forvantat": 10.01,
-   "z": -2.83,
-   "roi": 0.3175,
-   "clv": -0.1027,
-   "clv_n": 84,
-   "text": "Arenans bot 'egen' överskattar sina chanser för oddsrörelse före spelet = uppspelad: 2 träffar på 85 spel, men den räknade med 10.0."
+   "forvantat": 10.06,
+   "z": -2.84,
+   "roi": 0.3022,
+   "clv": -0.0988,
+   "clv_n": 85,
+   "text": "Arenans bot 'egen' överskattar sina chanser för oddsrörelse före spelet = uppspelad: 2 träffar på 86 spel, men den räknade med 10.1."
   }
  ],
- "testade_grupper": 89,
+ "testade_grupper": 90,
  "orsaker": {
   "arena:egen": {
    "Galopp eller diskad": 55,
-   "Mitt i fältet": 38,
+   "Mitt i fältet": 39,
    "Nära (precis utanför)": 24,
    "Marknaden trodde mindre efter spelet": 16,
    "Långt efter": 15,
@@ -79,7 +79,7 @@
   "arena:slumpen": {
    "Galopp eller diskad": 55,
    "Mitt i fältet": 36,
-   "Marknaden trodde mindre efter spelet": 32,
+   "Marknaden trodde mindre efter spelet": 33,
    "Nära (precis utanför)": 22,
    "Långt efter": 21,
    "Struken": 1,
@@ -88,7 +88,7 @@
   "arena:smarta": {
    "Mitt i fältet": 57,
    "Galopp eller diskad": 41,
-   "Nära (precis utanför)": 33,
+   "Nära (precis utanför)": 34,
    "Långt efter": 12,
    "Marknaden trodde mindre efter spelet": 6,
    "En skräll vann": 3,
@@ -103,8 +103,8 @@
    "Marknaden trodde mindre efter spelet": 1
   },
   "huvud": {
-   "Nära (precis utanför)": 98,
-   "Mitt i fältet": 86,
+   "Nära (precis utanför)": 99,
+   "Mitt i fältet": 87,
    "Långt efter": 22,
    "Galopp eller diskad": 21,
    "En skräll vann": 13,
@@ -137,10 +137,10 @@
  },
  "clv": {
   "arena:egen": {
-   "spel": 166,
-   "snitt": -0.0447,
+   "spel": 167,
+   "snitt": -0.043,
    "se": 0.0157,
-   "andel_battre": 0.373
+   "andel_battre": 0.377
   },
   "arena:farsk": {
    "spel": 35,
@@ -149,10 +149,10 @@
    "andel_battre": 0.743
   },
   "arena:favoriten": {
-   "spel": 186,
+   "spel": 187,
    "snitt": 0.0275,
    "se": 0.0083,
-   "andel_battre": 0.602
+   "andel_battre": 0.604
   },
   "arena:flexibel": {
    "spel": 30,
@@ -173,16 +173,16 @@
    "andel_battre": 0.696
   },
   "arena:slumpen": {
-   "spel": 185,
-   "snitt": -0.0956,
-   "se": 0.0176,
-   "andel_battre": 0.33
+   "spel": 186,
+   "snitt": -0.0966,
+   "se": 0.0175,
+   "andel_battre": 0.328
   },
   "arena:smarta": {
-   "spel": 209,
+   "spel": 210,
    "snitt": 0.0533,
-   "se": 0.0102,
-   "andel_battre": 0.622
+   "se": 0.0101,
+   "andel_battre": 0.624
   },
   "arena:stram": {
    "spel": 84,
@@ -194,15 +194,15 @@
  "kalibrering": [
   {
    "grupp": "0–3 %",
-   "spel": 186,
+   "spel": 187,
    "trodde": 0.0149,
-   "blev": 0.0108
+   "blev": 0.0107
   },
   {
    "grupp": "3–7 %",
-   "spel": 20,
-   "trodde": 0.0477,
-   "blev": 0.05
+   "spel": 21,
+   "trodde": 0.0472,
+   "blev": 0.0476
   },
   {
    "grupp": "7–15 %",
@@ -224,6 +224,26 @@
   }
  ],
  "senaste_forluster": [
+  {
+   "skapad": "2026-11-27T19:27",
+   "typ": "Trio-pool",
+   "val": "1-3-5",
+   "odds": 111.46,
+   "chans": 0.01592,
+   "placering": null,
+   "vinnare": 3,
+   "orsak": "Nära (precis utanför)"
+  },
+  {
+   "skapad": "2026-11-27T19:27",
+   "typ": "Trio",
+   "val": "3-5-2",
+   "odds": 43.56,
+   "chans": 0.03811,
+   "placering": null,
+   "vinnare": 3,
+   "orsak": "Mitt i fältet"
+  },
   {
    "skapad": "2026-11-27T19:02",
    "typ": "Trio",
@@ -323,26 +343,6 @@
    "placering": null,
    "vinnare": 7,
    "orsak": "Mitt i fältet"
-  },
-  {
-   "skapad": "2026-11-26T21:12",
-   "typ": "Trio-pool",
-   "val": "11-12-5",
-   "odds": 135.06,
-   "chans": 0.01031,
-   "placering": null,
-   "vinnare": 11,
-   "orsak": "Nära (precis utanför)"
-  },
-  {
-   "skapad": "2026-11-26T21:12",
-   "typ": "Trio",
-   "val": "12-5-11",
-   "odds": 87.54,
-   "chans": 0.0212,
-   "placering": null,
-   "vinnare": 11,
-   "orsak": "Nära (precis utanför)"
   }
  ]
 }
