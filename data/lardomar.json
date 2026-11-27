@@ -1,37 +1,50 @@
 {
- "spel": 1222,
+ "spel": 1225,
  "lardomar": [
   {
    "kalla": "arena:egen",
    "rubrik": "Speltyp",
    "grupp": "Vinnare",
-   "spel": 156,
+   "spel": 157,
    "traffar": 13,
-   "forvantat": 27.65,
-   "z": -3.34,
-   "roi": 0.4544,
-   "clv": -0.0525,
-   "clv_n": 155,
-   "text": "Arenans bot 'egen' överskattar sina chanser för speltyp = Vinnare: 13 träffar på 156 spel, men den räknade med 27.6."
+   "forvantat": 27.77,
+   "z": -3.36,
+   "roi": 0.4452,
+   "clv": -0.0523,
+   "clv_n": 156,
+   "text": "Arenans bot 'egen' överskattar sina chanser för speltyp = Vinnare: 13 träffar på 157 spel, men den räknade med 27.8."
   },
   {
    "kalla": "arena:egen",
    "rubrik": "Oddsrörelse före spelet",
    "grupp": "uppspelad",
-   "spel": 78,
+   "spel": 79,
    "traffar": 2,
-   "forvantat": 9.43,
-   "z": -2.72,
-   "roi": 0.4358,
-   "clv": -0.1208,
-   "clv_n": 77,
-   "text": "Arenans bot 'egen' överskattar sina chanser för oddsrörelse före spelet = uppspelad: 2 träffar på 78 spel, men den räknade med 9.4."
+   "forvantat": 9.55,
+   "z": -2.74,
+   "roi": 0.4176,
+   "clv": -0.1195,
+   "clv_n": 78,
+   "text": "Arenans bot 'egen' överskattar sina chanser för oddsrörelse före spelet = uppspelad: 2 träffar på 79 spel, men den räknade med 9.6."
+  },
+  {
+   "kalla": "arena:egen",
+   "rubrik": "Antal startande",
+   "grupp": "9–12",
+   "spel": 124,
+   "traffar": 12,
+   "forvantat": 21.82,
+   "z": -2.51,
+   "roi": 0.5557,
+   "clv": -0.0409,
+   "clv_n": 123,
+   "text": "Arenans bot 'egen' överskattar sina chanser för antal startande = 9–12: 12 träffar på 124 spel, men den räknade med 21.8."
   }
  ],
  "testade_grupper": 85,
  "orsaker": {
   "arena:egen": {
-   "Galopp eller diskad": 50,
+   "Galopp eller diskad": 51,
    "Mitt i fältet": 37,
    "Nära (precis utanför)": 24,
    "Marknaden trodde mindre efter spelet": 16,
@@ -48,7 +61,7 @@
   "arena:favoriten": {
    "Galopp eller diskad": 45,
    "Mitt i fältet": 31,
-   "Nära (precis utanför)": 27,
+   "Nära (precis utanför)": 28,
    "En skräll vann": 4,
    "Långt efter": 4,
    "Marknaden trodde mindre efter spelet": 2
@@ -77,7 +90,7 @@
    "Marknaden trodde mindre efter spelet": 1
   },
   "arena:slumpen": {
-   "Galopp eller diskad": 52,
+   "Galopp eller diskad": 53,
    "Mitt i fältet": 34,
    "Marknaden trodde mindre efter spelet": 30,
    "Nära (precis utanför)": 21,
@@ -137,10 +150,10 @@
  },
  "clv": {
   "arena:egen": {
-   "spel": 155,
-   "snitt": -0.0525,
-   "se": 0.0159,
-   "andel_battre": 0.361
+   "spel": 156,
+   "snitt": -0.0523,
+   "se": 0.0158,
+   "andel_battre": 0.359
   },
   "arena:farsk": {
    "spel": 35,
@@ -149,10 +162,10 @@
    "andel_battre": 0.743
   },
   "arena:favoriten": {
-   "spel": 174,
-   "snitt": 0.0293,
+   "spel": 175,
+   "snitt": 0.0295,
    "se": 0.0084,
-   "andel_battre": 0.621
+   "andel_battre": 0.623
   },
   "arena:flexibel": {
    "spel": 26,
@@ -173,10 +186,10 @@
    "andel_battre": 0.692
   },
   "arena:slumpen": {
-   "spel": 173,
-   "snitt": -0.0984,
-   "se": 0.0186,
-   "andel_battre": 0.329
+   "spel": 174,
+   "snitt": -0.0977,
+   "se": 0.0185,
+   "andel_battre": 0.333
   },
   "arena:smarta": {
    "spel": 198,
