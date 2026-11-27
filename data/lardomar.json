@@ -1,5 +1,5 @@
 {
- "spel": 1221,
+ "spel": 1222,
  "lardomar": [
   {
    "kalla": "arena:egen",
@@ -218,9 +218,9 @@
   },
   {
    "grupp": "30–100 %",
-   "spel": 9,
-   "trodde": 0.455,
-   "blev": 0.6667
+   "spel": 10,
+   "trodde": 0.4684,
+   "blev": 0.7
   }
  ],
  "senaste_forluster": [
