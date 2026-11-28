@@ -1,31 +1,31 @@
 {
- "spel": 1330,
+ "spel": 1339,
  "lardomar": [
   {
    "kalla": "arena:egen",
    "rubrik": "Speltyp",
    "grupp": "Vinnare",
-   "spel": 173,
+   "spel": 174,
    "traffar": 15,
-   "forvantat": 30.31,
-   "z": -3.34,
-   "roi": 0.3454,
-   "clv": -0.043,
-   "clv_n": 172,
-   "text": "Arenans bot 'egen' överskattar sina chanser för speltyp = Vinnare: 15 träffar på 173 spel, men den räknade med 30.3."
+   "forvantat": 30.48,
+   "z": -3.36,
+   "roi": 0.3376,
+   "clv": -0.0436,
+   "clv_n": 173,
+   "text": "Arenans bot 'egen' överskattar sina chanser för speltyp = Vinnare: 15 träffar på 174 spel, men den räknade med 30.5."
   },
   {
    "kalla": "arena:egen",
    "rubrik": "Oddsrörelse före spelet",
    "grupp": "uppspelad",
-   "spel": 89,
+   "spel": 90,
    "traffar": 2,
-   "forvantat": 10.41,
-   "z": -2.91,
-   "roi": 0.2583,
-   "clv": -0.0968,
-   "clv_n": 88,
-   "text": "Arenans bot 'egen' överskattar sina chanser för oddsrörelse före spelet = uppspelad: 2 träffar på 89 spel, men den räknade med 10.4."
+   "forvantat": 10.59,
+   "z": -2.94,
+   "roi": 0.2443,
+   "clv": -0.0973,
+   "clv_n": 89,
+   "text": "Arenans bot 'egen' överskattar sina chanser för oddsrörelse före spelet = uppspelad: 2 träffar på 90 spel, men den räknade med 10.6."
   },
   {
    "kalla": "arena:egen",
@@ -44,21 +44,21 @@
    "kalla": "arena:egen",
    "rubrik": "Startmetod",
    "grupp": "auto",
-   "spel": 116,
+   "spel": 117,
    "traffar": 11,
-   "forvantat": 20.56,
-   "z": -2.53,
-   "roi": 0.3272,
-   "clv": -0.026,
-   "clv_n": 115,
-   "text": "Arenans bot 'egen' överskattar sina chanser för startmetod = auto: 11 träffar på 116 spel, men den räknade med 20.6."
+   "forvantat": 20.73,
+   "z": -2.56,
+   "roi": 0.3158,
+   "clv": -0.027,
+   "clv_n": 116,
+   "text": "Arenans bot 'egen' överskattar sina chanser för startmetod = auto: 11 träffar på 117 spel, men den räknade med 20.7."
   }
  ],
- "testade_grupper": 90,
+ "testade_grupper": 91,
  "orsaker": {
   "arena:egen": {
    "Galopp eller diskad": 59,
-   "Mitt i fältet": 39,
+   "Mitt i fältet": 40,
    "Nära (precis utanför)": 25,
    "Marknaden trodde mindre efter spelet": 16,
    "Långt efter": 15,
@@ -72,7 +72,7 @@
    "En skräll vann": 2
   },
   "arena:favoriten": {
-   "Galopp eller diskad": 48,
+   "Galopp eller diskad": 49,
    "Mitt i fältet": 34,
    "Nära (precis utanför)": 30,
    "Långt efter": 5,
@@ -88,7 +88,7 @@
   },
   "arena:huvud": {
    "Mitt i fältet": 17,
-   "Galopp eller diskad": 16,
+   "Galopp eller diskad": 17,
    "Nära (precis utanför)": 12,
    "Långt efter": 3,
    "En skräll vann": 2,
@@ -103,7 +103,7 @@
    "Marknaden trodde mindre efter spelet": 1
   },
   "arena:slumpen": {
-   "Galopp eller diskad": 59,
+   "Galopp eller diskad": 60,
    "Mitt i fältet": 36,
    "Marknaden trodde mindre efter spelet": 33,
    "Nära (precis utanför)": 22,
@@ -113,8 +113,8 @@
   },
   "arena:smarta": {
    "Mitt i fältet": 57,
-   "Galopp eller diskad": 43,
-   "Nära (precis utanför)": 36,
+   "Galopp eller diskad": 44,
+   "Nära (precis utanför)": 37,
    "Långt efter": 12,
    "Marknaden trodde mindre efter spelet": 6,
    "En skräll vann": 3,
@@ -122,7 +122,7 @@
   },
   "arena:stram": {
    "Mitt i fältet": 18,
-   "Galopp eller diskad": 16,
+   "Galopp eller diskad": 17,
    "Nära (precis utanför)": 13,
    "Långt efter": 3,
    "En skräll vann": 2,
@@ -130,7 +130,7 @@
   },
   "huvud": {
    "Nära (precis utanför)": 101,
-   "Mitt i fältet": 87,
+   "Mitt i fältet": 88,
    "Långt efter": 22,
    "Galopp eller diskad": 21,
    "En skräll vann": 14,
@@ -161,22 +161,22 @@
    "clv_n": 0
   },
   "Trio": {
-   "faktor": 0.99,
-   "spel": 189,
+   "faktor": 0.987,
+   "spel": 190,
    "traffar": 3,
-   "forvantat": 3.06,
-   "z": -0.04,
-   "roi": 0.0152,
+   "forvantat": 3.08,
+   "z": -0.05,
+   "roi": 0.0098,
    "clv": null,
    "clv_n": 0
   }
  },
  "clv": {
   "arena:egen": {
-   "spel": 172,
-   "snitt": -0.043,
+   "spel": 173,
+   "snitt": -0.0436,
    "se": 0.0152,
-   "andel_battre": 0.372
+   "andel_battre": 0.37
   },
   "arena:farsk": {
    "spel": 35,
@@ -185,10 +185,10 @@
    "andel_battre": 0.743
   },
   "arena:favoriten": {
-   "spel": 192,
-   "snitt": 0.0267,
+   "spel": 193,
+   "snitt": 0.0275,
    "se": 0.0082,
-   "andel_battre": 0.609
+   "andel_battre": 0.611
   },
   "arena:flexibel": {
    "spel": 31,
@@ -197,10 +197,10 @@
    "andel_battre": 0.742
   },
   "arena:huvud": {
-   "spel": 81,
-   "snitt": 0.0636,
-   "se": 0.0143,
-   "andel_battre": 0.691
+   "spel": 82,
+   "snitt": 0.0652,
+   "se": 0.0142,
+   "andel_battre": 0.695
   },
   "arena:rad": {
    "spel": 57,
@@ -209,28 +209,28 @@
    "andel_battre": 0.702
   },
   "arena:slumpen": {
-   "spel": 191,
-   "snitt": -0.0988,
-   "se": 0.0172,
-   "andel_battre": 0.325
+   "spel": 192,
+   "snitt": -0.0991,
+   "se": 0.0171,
+   "andel_battre": 0.323
   },
   "arena:smarta": {
-   "spel": 215,
-   "snitt": 0.0531,
+   "spel": 217,
+   "snitt": 0.051,
    "se": 0.0099,
-   "andel_battre": 0.628
+   "andel_battre": 0.622
   },
   "arena:stram": {
-   "spel": 85,
-   "snitt": 0.0595,
-   "se": 0.0137,
-   "andel_battre": 0.671
+   "spel": 86,
+   "snitt": 0.061,
+   "se": 0.0136,
+   "andel_battre": 0.674
   }
  },
  "kalibrering": [
   {
    "grupp": "0–3 %",
-   "spel": 190,
+   "spel": 191,
    "trodde": 0.0149,
    "blev": 0.0105
   },
@@ -254,12 +254,22 @@
   },
   {
    "grupp": "30–100 %",
-   "spel": 12,
-   "trodde": 0.4596,
-   "blev": 0.5833
+   "spel": 13,
+   "trodde": 0.471,
+   "blev": 0.6154
   }
  ],
  "senaste_forluster": [
+  {
+   "skapad": "2026-11-27T21:30",
+   "typ": "Trio",
+   "val": "8-4-6",
+   "odds": 98.85,
+   "chans": 0.0156,
+   "placering": null,
+   "vinnare": 2,
+   "orsak": "Mitt i fältet"
+  },
   {
    "skapad": "2026-11-27T20:53",
    "typ": "Trio",
@@ -369,16 +379,6 @@
    "placering": null,
    "vinnare": 1,
    "orsak": "Mitt i fältet"
-  },
-  {
-   "skapad": "2026-11-27T14:08",
-   "typ": "Vinnare",
-   "val": "5",
-   "odds": 2.83,
-   "chans": 0.39256,
-   "placering": 6,
-   "vinnare": 1,
-   "orsak": "Långt efter"
   }
  ]
 }
